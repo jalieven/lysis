@@ -13,8 +13,8 @@ const createApp = () => {
 	});
 	validate(app);
 	app.use(bodyParser());
-	const voaRouter = new Router({ prefix: '/lysis' });
-	app.use(voaRouter.routes()).use(voaRouter.allowedMethods());
+	const lysisRouter = new Router({ prefix: '/lysis' });
+	app.use(lysisRouter.routes()).use(lysisRouter.allowedMethods());
 	app.use(function* (next) {
 		try {
 			yield next;
@@ -23,7 +23,7 @@ const createApp = () => {
 			this.app.emit('error', err, this);
 		}
 	});
-	app.router = voaRouter;
+	app.router = lysisRouter;
 	return app;
 };
 

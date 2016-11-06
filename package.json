@@ -1,50 +1,50 @@
 {
-  "name": "voa",
-  "version": "0.0.1",
-  "description": "Flexible validation for Koa",
-  "main": "index.js",
-  "scripts": {
-    "clean": "rm -rf dist && mkdir dist",
-    "build-voa": "babel src --out-dir ./dist",
-    "build": "npm run clean && npm run build-voa",
-    "test": "NODE_ENV=test mocha --compilers js:babel-register --require babel-polyfill test/index.js",
-    "coverage": "nyc --check-coverage --lines 50 --functions 50 --branches 50 --statements 50 npm run test",
-    "pub": "npm run build && npm publish"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jalieven/voa.git"
-  },
-  "keywords": [
-    "koa",
-    "validate",
-    "validation",
-    "json",
-    "middleware"
-  ],
-  "author": "Jan Lievens",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jalieven/voa/issues"
-  },
-  "homepage": "https://github.com/jalieven/voa#readme",
-  "dependencies": {
-    "lodash": "^4.16.6",
-    "object-match": "^0.1.1"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-polyfill": "^6.16.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-stage-0": "^6.16.0",
-    "babel-register": "^6.18.0",
-    "chai": "^3.5.0",
-    "koa": "^1.2.4",
-    "koa-bodyparser": "^2.2.0",
-    "koa-router": "^5.4.0",
-    "mocha": "^3.1.2",
-    "nyc": "^8.4.0",
-    "supertest": "^2.0.1",
-    "validator": "^6.1.0"
-  }
+	"name": "lysis",
+	"version": "0.0.1",
+	"description": "Flexible validation for Koa",
+	"main": "index.js",
+	"scripts": {
+		"clean": "rm -rf dist && mkdir dist",
+		"build-lysis": "babel src --out-dir ./dist",
+		"build": "npm run clean && npm run build-lysis",
+		"test": "NODE_ENV=test mocha --compilers js:babel-register --require babel-polyfill test/index.js",
+		"coverage": "nyc --check-coverage --lines 50 --functions 50 --branches 50 --statements 50 npm run test",
+		"pub": "npm run build && npm publish"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/jalieven/lysis.git"
+	},
+	"keywords": [
+		"koa",
+		"validate",
+		"validation",
+		"json",
+		"middleware"
+	],
+	"author": "Jan Lievens",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/jalieven/lysis/issues"
+	},
+	"homepage": "https://github.com/jalieven/lysis#readme",
+	"dependencies": {
+		"lodash": "^4.16.6",
+		"object-match": "^0.1.1"
+	},
+	"devDependencies": {
+		"babel-cli": "^6.18.0",
+		"babel-polyfill": "^6.16.0",
+		"babel-preset-es2015": "^6.18.0",
+		"babel-preset-stage-0": "^6.16.0",
+		"babel-register": "^6.18.0",
+		"chai": "^3.5.0",
+		"koa": "^1.2.4",
+		"koa-bodyparser": "^2.2.0",
+		"koa-router": "^5.4.0",
+		"mocha": "^3.1.2",
+		"nyc": "^8.4.0",
+		"supertest": "^2.0.1",
+		"validator": "^6.1.0"
+	}
 }
