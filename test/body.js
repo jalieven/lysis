@@ -27,7 +27,7 @@ describe('Lysis - body validation', () => {
 			.send({
 				one: {
 					two: {
-						three: "fourtythree",
+						three: 'fourtythree',
 					},
 				},
 			})
@@ -55,7 +55,7 @@ describe('Lysis - body validation', () => {
 		app.router.post('/body', function* () {
 			this.validateBody('one.*.three')
 				.validate(isInt, '"three" must be an integer.')
-				.validate((three) => three < 0, '"three" must be negative.')
+				.validate(three => three < 0, '"three" must be negative.')
 				.sanitize(toInt, 10);
 			if (this.errors) {
 				this.status = 400;
@@ -70,7 +70,7 @@ describe('Lysis - body validation', () => {
 			.send({
 				one: {
 					two: {
-						three: "42",
+						three: '42',
 					},
 				},
 			})
@@ -98,11 +98,11 @@ describe('Lysis - body validation', () => {
 		app.router.post('/body', function* () {
 			this.validateBody('one.*.three')
 				.validate(isInt, '"three" must be an integer.')
-				.validate((three) => three < 0, '"three" must be negative.')
+				.validate(three => three < 0, '"three" must be negative.')
 				.sanitize(toInt, 10);
 			this.validateBody('one.four.*.five.six')
 				.validate(isFloat, '"six" must be a float.')
-				.sanitize((v) => toFloat(v));
+				.sanitize(v => toFloat(v));
 			if (this.errors) {
 				this.status = 400;
 				this.body = { validation: this.errors };
@@ -116,7 +116,7 @@ describe('Lysis - body validation', () => {
 			.send({
 				one: {
 					two: {
-						three: "42",
+						three: '42',
 					},
 					four: [
 						{
@@ -232,7 +232,7 @@ describe('Lysis - body validation', () => {
 	it('check body invalid (part 6)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			const mandatoryMapping = (path) => ({ message: `${path} is mandatory!!!` });
+			const mandatoryMapping = path => ({ message: `${path} is mandatory!!!` });
 			this.validateBody('one.*.three')
 				.mandatory(mandatoryMapping)
 				.validate(isInt, '"three" must be an integer.')
@@ -267,7 +267,7 @@ describe('Lysis - body validation', () => {
 		app.router.post('/body', function* () {
 			this.validateBody('one.*.three')
 				.validate(isInt, '"three" must be an integer.')
-				.validate((three) => three < 0, '"three" must be negative.')
+				.validate(three => three < 0, '"three" must be negative.')
 				.sanitize(toInt, 10);
 			if (this.errors) {
 				this.status = 400;
@@ -282,7 +282,7 @@ describe('Lysis - body validation', () => {
 			.send({
 				one: {
 					two: {
-						three: "-42",
+						three: '-42',
 					},
 				},
 			})
@@ -318,7 +318,7 @@ describe('Lysis - body validation', () => {
 			.send({
 				one: {
 					two: {
-						three: "544",
+						three: '544',
 					},
 				},
 			})
@@ -327,7 +327,7 @@ describe('Lysis - body validation', () => {
 				expect(res.body).to.eql({
 					one: {
 						two: {
-							three: 544
+							three: 544,
 						},
 					},
 				});
@@ -369,7 +369,7 @@ describe('Lysis - body validation', () => {
 		app.router.post('/body', function* () {
 			this.validateBody('*.one.two.three')
 				.sanitize(toInt, 10)
-				.sanitize((v) => v / 5);
+				.sanitize(v => v / 5);
 			if (this.errors) {
 				this.status = 400;
 				this.body = { validation: this.errors };
@@ -384,10 +384,10 @@ describe('Lysis - body validation', () => {
 				{
 					one: {
 						two: {
-							three: "25",
+							three: '25',
 						},
 					},
-				}
+				},
 			])
 			.expect(200)
 			.expect((res) => {

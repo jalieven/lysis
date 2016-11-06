@@ -1,7 +1,7 @@
 'use strict';
 
 import agent from 'supertest';
-import { isInt, toInt, isFloat, toFloat } from 'validator';
+import { isInt, toInt } from 'validator';
 
 import createApp from './util';
 
@@ -11,7 +11,7 @@ describe('Lysis - param validation', () => {
 		const app = createApp();
 		app.router.get('/param/:id', function* () {
 			const errMapping = (match, tip) =>
-				({ name: 'id', message: `${match.key} with value of "${match.value}" is not an integer!`, tip })
+				({ name: 'id', message: `${match.key} with value of "${match.value}" is not an integer!`, tip });
 			this.validateParam('id', errMapping)
 				.validate(isInt, '"id" must be an integer.')
 				.sanitize(toInt, 10);

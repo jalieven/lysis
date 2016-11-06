@@ -23,7 +23,7 @@ describe('Lysis - header validation', () => {
 		});
 		agent(app.listen())
 			.get('/lysis/headers')
-			.set('int', "one")
+			.set('int', 'one')
 			.query()
 			.expect(400)
 			.expect((res) => {
@@ -56,7 +56,7 @@ describe('Lysis - header validation', () => {
 		});
 		agent(app.listen())
 			.get('/lysis/headers')
-			.set('int', "54")
+			.set('int', '54')
 			.query()
 			.expect(200)
 			.expect((res) => {

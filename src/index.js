@@ -8,25 +8,6 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import objectMatch from 'object-match';
 
-const validate = (app) => {
-	app.context.validateQuery = function(paths, mapErrorFn) {
-		return new Validation(this, this.request.query, paths, mapErrorFn);
-	};
-	app.context.validateParam = function(paths, mapErrorFn) {
-		return new Validation(this, this.params, paths, mapErrorFn);
-	};
-	app.context.validateHeader = function(paths, mapErrorFn) {
-		return new Validation(this, this.headers, paths, mapErrorFn);
-	};
-	app.context.validateBody = function(paths, mapErrorFn) {
-		return new Validation(this, this.request.body, paths, mapErrorFn);
-	};
-};
-
-export const and = (predicates) => (value) => every(predicates, (predicate) => predicate(value));
-
-export const or = (predicates) => (value) => some(predicates, (predicate) => predicate(value));
-
 class Validation {
 
 	constructor(context, value, paths, mapErrorFn) {
@@ -83,19 +64,19 @@ class Validation {
 				}
 			} else {
 				matches.forEach((match) => {
-						const valid = fn(match.value, ...argz);
-						if (!valid) {
-							if (!this.context.errors) {
-								this.context.errors = [];
-							}
-							if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
-								const err = this.mapErrorFn(match, tip);
-								this.context.errors.push(err);
-							} else {
-								this.context.errors.push({ path: match.path, tip });
-							}
+					const valid = fn(match.value, ...argz);
+					if (!valid) {
+						if (!this.context.errors) {
+							this.context.errors = [];
 						}
-					});
+						if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
+							const err = this.mapErrorFn(match, tip);
+							this.context.errors.push(err);
+						} else {
+							this.context.errors.push({ path: match.path, tip });
+						}
+					}
+				});
 			}
 		}
 		return this;
@@ -120,5 +101,26 @@ class Validation {
 	}
 
 }
+
+const validate = (app) => {
+	/* eslint-disable no-param-reassign */
+	app.context.validateQuery = function (paths, mapErrorFn) {
+		return new Validation(this, this.request.query, paths, mapErrorFn);
+	};
+	app.context.validateParam = function (paths, mapErrorFn) {
+		return new Validation(this, this.params, paths, mapErrorFn);
+	};
+	app.context.validateHeader = function (paths, mapErrorFn) {
+		return new Validation(this, this.headers, paths, mapErrorFn);
+	};
+	app.context.validateBody = function (paths, mapErrorFn) {
+		return new Validation(this, this.request.body, paths, mapErrorFn);
+	};
+	/* eslint-enable no-param-reassign */
+};
+
+export const and = predicates => value => every(predicates, predicate => predicate(value));
+
+export const or = predicates => value => some(predicates, predicate => predicate(value));
 
 export default validate;

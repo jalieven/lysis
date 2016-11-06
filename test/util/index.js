@@ -19,7 +19,6 @@ const createApp = () => {
 		try {
 			yield next;
 		} catch (err) {
-			console.log(err.stack)
 			this.app.emit('error', err, this);
 		}
 	});
