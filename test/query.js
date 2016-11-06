@@ -11,8 +11,12 @@ describe('Lysis - query validation', () => {
 	it('check query invalid', (done) => {
 		const app = createApp();
 		app.router.get('/query', function* () {
+			const isEven = (v) => v % 2 === 0;
 			this.validateQuery('one')
-				.validate(and([isInt, (v) => v % 2 === 0 ]), '"one" must be an even integer.')
+				.validate(and([isInt, isEven]), '"one" must be an even integer.')
+				.sanitize(toBoolean);
+			this.validateQuery('two')
+				.validate(and([isInt, isEven]), '"two" must be an even integer.')
 				.sanitize(toBoolean);
 			if (this.errors) {
 				this.status = 400;
@@ -26,10 +30,10 @@ describe('Lysis - query validation', () => {
 			.get('/lysis/query')
 			.query({
 				one: 5,
+				two: 2,
 			})
 			.expect(400)
 			.expect((res) => {
-				console.log(res.body)
 				expect(res.body).to.eql({
 					validation: [
 						{
@@ -45,20 +49,80 @@ describe('Lysis - query validation', () => {
 			.end(done);
 	});
 
+	it('check query invalid (multiple paths and error mapping)', (done) => {
+		const app = createApp();
+		app.router.get('/query', function* () {
+			const errMapping = (match, tip) =>
+				({ path: match.path, name: match.key, message: `${match.path.join('/')} with value of "${match.value}" must be a boolean or an integer!` })
+			this.validateQuery(['one', 'two', 'three', 'four.*'], errMapping)
+				.validate(or([isBoolean, isInt]), '"one" must be a boolean or an integer.')
+				.sanitize(toBoolean);
+			if (this.errors) {
+				this.status = 400;
+				this.body = { validation: this.errors };
+			} else {
+				this.status = 200;
+				this.body = this.request.query;
+			}
+		});
+		agent(app.listen())
+			.get('/lysis/query')
+			.query({
+				one: 'one',
+				three: 'zero',
+				four: [
+					'truethy',
+					'-10.8',
+				],
+			})
+			.expect(400)
+			.expect((res) => {
+				expect(res.body).to.eql({
+					validation: [
+						{
+							path: [
+								'one'
+							],
+							name: 'one',
+							message: 'one with value of "one" must be a boolean or an integer!'
+						},
+						{
+							path: [
+								'three'
+							],
+							name: 'three',
+							message: 'three with value of "zero" must be a boolean or an integer!'
+						},
+						{
+							path: [
+								'four',
+								'0'
+							],
+							name: '0',
+							message: 'four/0 with value of "truethy" must be a boolean or an integer!'
+						},
+						{
+							path: [
+								'four',
+								'1'
+							],
+							name: '1',
+							message: 'four/1 with value of "-10.8" must be a boolean or an integer!'
+						},
+					],
+				});
+				return false;
+			})
+			.end(done);
+	});
+
 	it('check query sanitized', (done) => {
 		const app = createApp();
 		app.router.get('/query', function* () {
-			this.validateQuery('one')
+			const errMapping = (match, tip) =>
+				({ name: math.key, message: `${match.key} with value of "${match.value}" must be a boolean or an integer!` })
+			this.validateQuery(['one', 'two', 'three', 'four.*'], errMapping)
 				.validate(or([isBoolean, isInt]), '"one" must be a boolean or an integer.')
-				.sanitize(toBoolean);
-			this.validateQuery('two')
-				.validate(or([isBoolean, isInt]), '"two" must be a boolean or an integer.')
-				.sanitize(toBoolean);
-			this.validateQuery('three')
-				.validate(or([isBoolean, isInt]), '"three" must be a boolean or an integer.')
-				.sanitize(toBoolean);
-			this.validateQuery('four.*')
-				.validate(or([isBoolean, isInt]), '"four" must be an array of booleans or integers.')
 				.sanitize(toBoolean);
 			if (this.errors) {
 				this.status = 400;
@@ -83,7 +147,17 @@ describe('Lysis - query validation', () => {
 			})
 			.expect(200)
 			.expect((res) => {
-				expect(res.body).to.eql({ one: true, two: true, three: false, four: [ true, false, true, true ] });
+				expect(res.body).to.eql({
+					one: true,
+					two: true,
+					three: false,
+					four: [
+						true,
+						false,
+						true,
+						true,
+					]
+				});
 				return false;
 			})
 			.end(done);

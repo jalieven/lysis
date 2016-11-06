@@ -3,20 +3,23 @@
 import set from 'lodash/set';
 import some from 'lodash/some';
 import every from 'lodash/every';
+import isFunction from 'lodash/isFunction';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
 import objectMatch from 'object-match';
 
 const validate = (app) => {
-	app.context.validateQuery = function(path, key) {
-		return new Validation(this, this.request.query, path, key);
+	app.context.validateQuery = function(paths, mapErrorFn) {
+		return new Validation(this, this.request.query, paths, mapErrorFn);
 	};
-	app.context.validateParam = function(path, key) {
-		return new Validation(this, this.params, path, key);
+	app.context.validateParam = function(paths, mapErrorFn) {
+		return new Validation(this, this.params, paths, mapErrorFn);
 	};
-	app.context.validateHeader = function(path, key) {
-		return new Validation(this, this.headers, path, key);
+	app.context.validateHeader = function(paths, mapErrorFn) {
+		return new Validation(this, this.headers, paths, mapErrorFn);
 	};
-	app.context.validateBody = function(path, key) {
-		return new Validation(this, this.request.body, path, key);
+	app.context.validateBody = function(paths, mapErrorFn) {
+		return new Validation(this, this.request.body, paths, mapErrorFn);
 	};
 };
 
@@ -26,40 +29,93 @@ export const or = (predicates) => (value) => some(predicates, (predicate) => pre
 
 class Validation {
 
-	constructor(context, value, path, key) {
+	constructor(context, value, paths, mapErrorFn) {
 		this.context = context;
 		this.value = value;
-		this.path = path;
-		this.key = key;
+		this.paths = paths;
+		this.mapErrorFn = mapErrorFn;
+		this.isOptional = false;
 	}
 
 	optional() {
-		this.optional = true;
+		this.isOptional = true;
+		return this;
+	}
+
+	mandatory(mapMandatoryFn) {
+		this.isOptional = false;
+		this.mapMandatoryFn = mapMandatoryFn;
 		return this;
 	}
 
 	validate(fn, tip, args) {
 		const argz = args || [];
-		objectMatch(this.path, this.value)
-			.forEach((match) => {
-
-				const valid = fn(match.value, ...argz);
-				if (!valid) {
-					if (!this.context.errors) {
-						this.context.errors = [];
-					}
-					this.context.errors.push({ path: match.path, tip });
-				}
+		if (isArray(this.paths)) {
+			// TODO implement mandatory/optional for multiple paths + test + DRY plz
+			this.paths.forEach((path) => {
+				objectMatch(path, this.value)
+					.forEach((match) => {
+						const valid = fn(match.value, ...argz);
+						if (!valid) {
+							if (!this.context.errors) {
+								this.context.errors = [];
+							}
+							if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
+								const err = this.mapErrorFn(match, tip);
+								this.context.errors.push(err);
+							} else {
+								this.context.errors.push({ path: match.path, tip });
+							}
+						}
+					});
 			});
+		} else {
+			const matches = objectMatch(this.paths, this.value);
+			if (isEmpty(matches) && !this.isOptional) {
+				if (!this.context.errors) {
+					this.context.errors = [];
+				}
+				if (this.mapMandatoryFn && isFunction(this.mapMandatoryFn)) {
+					const mandatoryErr = this.mapMandatoryFn(this.paths);
+					this.context.errors.push(mandatoryErr);
+				} else {
+					this.context.errors.push({ path: this.paths, tip: `${this.paths} is mandatory.` });
+				}
+			} else {
+				matches.forEach((match) => {
+						const valid = fn(match.value, ...argz);
+						if (!valid) {
+							if (!this.context.errors) {
+								this.context.errors = [];
+							}
+							if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
+								const err = this.mapErrorFn(match, tip);
+								this.context.errors.push(err);
+							} else {
+								this.context.errors.push({ path: match.path, tip });
+							}
+						}
+					});
+			}
+		}
 		return this;
 	}
 
 	sanitize(fn, args) {
 		const argz = args || [];
-		objectMatch(this.path, this.value)
-			.forEach((match) => {
-				set(this.value, match.path, fn(match.value, ...argz));
+		if (isArray(this.paths)) {
+			this.paths.forEach((path) => {
+				objectMatch(path, this.value)
+					.forEach((match) => {
+						set(this.value, match.path, fn(match.value, ...argz));
+					});
 			});
+		} else {
+			objectMatch(this.paths, this.value)
+				.forEach((match) => {
+					set(this.value, match.path, fn(match.value, ...argz));
+				});
+		}
 		return this;
 	}
 

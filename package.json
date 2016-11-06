@@ -9,7 +9,7 @@
 		"build": "npm run clean && npm run build-lysis",
 		"test": "NODE_ENV=test mocha --compilers js:babel-register --require babel-polyfill test/index.js",
 		"coverage": "nyc --check-coverage --lines 50 --functions 50 --branches 50 --statements 50 npm run test",
-		"pub": "npm run build && npm publish"
+		"pub": "npm run coverage && npm run build && npm publish"
 	},
 	"repository": {
 		"type": "git",
