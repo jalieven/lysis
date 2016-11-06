@@ -1,0 +1,28 @@
+{
+  "extends": "airbnb-base",
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0,
+    "indent": ["error", "tab", { "SwitchCase": 1, "VariableDeclarator": 1 }],
+    "max-len": "off",
+    "padded-blocks": "off",
+    "no-underscore-dangle": ["warn", { "allowAfterThis": true }],
+    "no-multi-spaces": ["error", {"exceptions": {"VariableDeclarator": true}}],
+    "no-unused-vars": ["warn", { "vars": "local", "args": "after-used" }],
+    "new-cap": ["error", { "capIsNewExceptions": ["Map", "List", "Repeat"] }],
+    "require-yield": ["warn"],
+    "import/no-extraneous-dependencies": ["warn", {"devDependencies": false}],
+    "func-names": "off",
+    "no-console": "off",
+    "no-new-func": "off",
+    "import/prefer-default-export": ["warn"]
+  },
+  "env": {
+    "mocha": true
+  },
+  "globals": {
+    "expect": true,
+    "assert": true,
+    "agent": true
+  },
+}
