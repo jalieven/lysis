@@ -5,7 +5,7 @@ import { isInt, toInt, isFloat, toFloat } from 'validator';
 
 import createApp from './util';
 
-describe('Lysis - body validation', () => {
+describe('Lysis - Koa body validation', () => {
 
 	it('check body invalid (part 1)', (done) => {
 		const app = createApp();

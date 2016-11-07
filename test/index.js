@@ -6,6 +6,7 @@ import './param';
 import './header';
 import './query';
 import './body';
+import './standalone';
 
 global.chai = chai;
 global.expect = global.chai.expect;

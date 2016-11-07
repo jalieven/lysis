@@ -4,14 +4,14 @@ import koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
 
-import validate from '../../src';
+import { validateKoa } from '../../src';
 
 const createApp = () => {
 	const app = koa();
 	app.on('error', (err) => {
 		console.error(err, 'Server error');
 	});
-	validate(app);
+	validateKoa(app);
 	app.use(bodyParser());
 	const lysisRouter = new Router({ prefix: '/lysis' });
 	app.use(lysisRouter.routes()).use(lysisRouter.allowedMethods());

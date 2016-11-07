@@ -6,7 +6,7 @@ import { isBoolean, isInt, toBoolean } from 'validator';
 import createApp from './util';
 import { and, or } from '../src';
 
-describe('Lysis - query validation', () => {
+describe('Lysis - Koa query validation', () => {
 
 	it('check query invalid', (done) => {
 		const app = createApp();

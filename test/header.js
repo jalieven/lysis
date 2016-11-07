@@ -5,7 +5,7 @@ import { isInt, toInt } from 'validator';
 
 import createApp from './util';
 
-describe('Lysis - header validation', () => {
+describe('Lysis - Koa header validation', () => {
 
 	it('check headers invalid', (done) => {
 		const app = createApp();

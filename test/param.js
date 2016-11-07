@@ -5,7 +5,7 @@ import { isInt, toInt } from 'validator';
 
 import createApp from './util';
 
-describe('Lysis - param validation', () => {
+describe('Lysis - Koa param validation', () => {
 
 	it('check param invalid (with custom error mapping)', (done) => {
 		const app = createApp();

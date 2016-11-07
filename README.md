@@ -1,2 +1,2 @@
 # lysis
-Flexible validation for koa
+Composable validation for any environment
