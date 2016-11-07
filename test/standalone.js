@@ -10,7 +10,7 @@ describe('Lysis - Standalone validation', () => {
 
 	it('check validateCombined', (done) => {
 		const toValidate = {
-			one: "one",
+			one: 'one',
 			two: {
 				three: [
 					{ four: 1 },
@@ -81,7 +81,7 @@ describe('Lysis - Standalone validation', () => {
 			expect(fortyFive).to.equal('45');
 			expect(sixyNine).to.equal(69);
 			return false;
-		}
+		};
 		const validationErrors = validation
 			.validateCombined(validationFn, 'The combination of one and fours is wrong.', '45', 69)
 			.errors();

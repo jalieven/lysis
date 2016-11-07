@@ -6,7 +6,6 @@ import every from 'lodash/every';
 import isFunction from 'lodash/isFunction';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
-import flattenDeep from 'lodash/flattenDeep';
 import objectMatch from 'object-match';
 
 class Validation {
@@ -85,7 +84,7 @@ class Validation {
 
 	validateCombined(fn, tip, ...args) {
 		if (isArray(this.paths)) {
-			const matches = this.paths.map((path) => ({ selector: path, matches: objectMatch(path, this.value) }));
+			const matches = this.paths.map(path => ({ selector: path, matches: objectMatch(path, this.value) }));
 			const valid = fn(matches, ...args);
 			if (!valid) {
 				if (!this.context.errors) {
