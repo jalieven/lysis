@@ -126,23 +126,6 @@ class Validation {
 
 }
 
-export const validateKoa = (app) => {
-	/* eslint-disable no-param-reassign */
-	app.context.validateQuery = function (paths, mapErrorFn) {
-		return new Validation(this, this.request.query, paths, mapErrorFn);
-	};
-	app.context.validateParam = function (paths, mapErrorFn) {
-		return new Validation(this, this.params, paths, mapErrorFn);
-	};
-	app.context.validateHeader = function (paths, mapErrorFn) {
-		return new Validation(this, this.headers, paths, mapErrorFn);
-	};
-	app.context.validateBody = function (paths, mapErrorFn) {
-		return new Validation(this, this.request.body, paths, mapErrorFn);
-	};
-	/* eslint-enable no-param-reassign */
-};
-
 export const and = predicates => value => every(predicates, predicate => predicate(value));
 
 export const or = predicates => value => some(predicates, predicate => predicate(value));

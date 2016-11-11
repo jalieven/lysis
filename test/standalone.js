@@ -3,7 +3,6 @@
 import agent from 'supertest';
 import { isBoolean, isInt, toBoolean } from 'validator';
 
-import createApp from './util';
 import Validation, { and, or } from '../src';
 
 describe('Lysis - Standalone validation', () => {

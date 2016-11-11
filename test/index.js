@@ -2,10 +2,7 @@
 
 import chai from 'chai';
 
-import './param';
-import './header';
-import './query';
-import './body';
+import './koa';
 import './standalone';
 
 global.chai = chai;

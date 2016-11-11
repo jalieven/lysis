@@ -4,7 +4,7 @@ import agent from 'supertest';
 import { isBoolean, isInt, toBoolean } from 'validator';
 
 import createApp from './util';
-import { and, or } from '../src';
+import { and, or } from '../../src';
 
 describe('Lysis - Koa query validation', () => {
 
