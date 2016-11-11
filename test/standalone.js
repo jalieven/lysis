@@ -129,7 +129,7 @@ describe('Lysis - Standalone validation', () => {
 		const toValidate = {
 			one: 'no_boolean_here',
 			two: '1',
-			three: 'true'
+			three: 'true',
 		};
 		const validationErrors = new Lysis(toValidate, ['one', 'two', 'three'])
 			.validate(and(not(isBoolean), not(isInt)), 'I cannot handle booleans or integers!')
@@ -146,22 +146,24 @@ describe('Lysis - Standalone validation', () => {
 					'three',
 				],
 				tip: 'I cannot handle booleans or integers!',
-			}
+			},
 		]);
 	});
 
 	it('checks custom predicate function', () => {
 		const toValidate = {
-			today: '2016-08-11T19:36:01.323Z'
+			today: '2016-08-11T19:36:01.323Z',
 		};
 		const isWeekend = (value) => {
 			const day = moment(value).day();
-			return (day == 6) || (day == 0);
+			return (day === 6) || (day === 0);
 		};
 		const validationErrors = new Lysis(toValidate, 'today')
 			.validate(isWeekend, 'Today must be weekend!')
 			.errors();
-		expect(validationErrors).to.eql([ { path: [ 'today' ], tip: 'Today must be weekend!' } ]);
+		expect(validationErrors).to.eql([
+			{ path: ['today'], tip: 'Today must be weekend!' },
+		]);
 	});
 
 });

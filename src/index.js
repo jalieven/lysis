@@ -6,9 +6,8 @@ import every from 'lodash/every';
 import isFunction from 'lodash/isFunction';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
-import objectMatch from 'object-match';
 
-// import { matcher } from './util';
+import { matcher } from './util';
 
 class Lysis {
 
@@ -33,13 +32,12 @@ class Lysis {
 
 	validate(fn, tip, ...args) {
 		if (isArray(this.paths)) {
-			// TODO remove object-match from the equation
 			// TODO load-test lysis
 			// TODO rename paths to selectors and the resulting multiples are paths
 			// TODO implement mandatory/optional for multiple paths + test + DRY plz
 			// TODO fix the matches structure in the validateCombined (should be an object with selectors as key and match.value (or array) as value)
 			this.paths.forEach((path) => {
-				objectMatch(path, this.value)
+				matcher(path, this.value)
 					.forEach((match) => {
 						const valid = fn(match.value, ...args);
 						if (!valid) {
@@ -56,7 +54,7 @@ class Lysis {
 					});
 			});
 		} else {
-			const matches = objectMatch(this.paths, this.value);
+			const matches = matcher(this.paths, this.value);
 			if (isEmpty(matches) && !this.isOptional) {
 				if (!this.context.errors) {
 					this.context.errors = [];
@@ -89,7 +87,7 @@ class Lysis {
 
 	validateCombined(fn, tip, ...args) {
 		if (isArray(this.paths)) {
-			const matches = this.paths.map(path => ({ selector: path, matches: objectMatch(path, this.value) }));
+			const matches = this.paths.map(path => ({ selector: path, matches: matcher(path, this.value) }));
 			const valid = fn(matches, ...args);
 			if (!valid) {
 				if (!this.context.errors) {
@@ -111,13 +109,13 @@ class Lysis {
 	sanitize(fn, ...args) {
 		if (isArray(this.paths)) {
 			this.paths.forEach((path) => {
-				objectMatch(path, this.value)
+				matcher(path, this.value)
 					.forEach((match) => {
 						set(this.value, match.path, fn(match.value, ...args));
 					});
 			});
 		} else {
-			objectMatch(this.paths, this.value)
+			matcher(this.paths, this.value)
 				.forEach((match) => {
 					set(this.value, match.path, fn(match.value, ...args));
 				});
@@ -130,8 +128,6 @@ class Lysis {
 	}
 
 }
-
-// TODO test these in different combinations
 
 export const and = (...predicates) => (value, ...args) => every(predicates, predicate => predicate(value, ...args));
 
