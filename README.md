@@ -9,6 +9,7 @@ Features:
 - customizable error/mandatory messages
 - check different parts of your payload in a combined predicate function
 - get the exact path to the invalid field
+- only depends on lodash
 
 ## Installation
 
@@ -89,7 +90,7 @@ Prints out:
 
 ### Optional/mandatory validation
 
-By default fields are mandatory:
+Fields are mandatory by default:
 
 ```Javascript
 const toValidate = {};
@@ -165,7 +166,7 @@ const validationErrors = new Lysis(toValidate, ['one', 'two'])
 
 ### Sanitization
 
-You can use lysis only for sanitizing your object:
+You can use lysis for sanitizing your object:
 
 ```Javascript
 import { escape } from 'validator';
@@ -270,8 +271,8 @@ const validate = require('lysis/koa');
 const bodyParser = require('koa-bodyparser');
 
 const app = koa();
-validate(app);
 app.use(bodyParser());
+validate(app);
 ```
 
 Then use the convenience methods (checkHeader, checkParam, checkQuery and checkBody) in your generators:
@@ -293,7 +294,7 @@ app.router.get('/headers', function* () {
 
 ### Express
 
-TODO
+TODO express-validator has a nice API
 
 ## API
 

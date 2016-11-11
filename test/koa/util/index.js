@@ -11,8 +11,8 @@ const createApp = () => {
 	app.on('error', (err) => {
 		console.error(err, 'Server error');
 	});
-	validate(app);
 	app.use(bodyParser());
+	validate(app);
 	const lysisRouter = new Router({ prefix: '/lysis' });
 	app.use(lysisRouter.routes()).use(lysisRouter.allowedMethods());
 	app.use(function* (next) {

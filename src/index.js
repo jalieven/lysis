@@ -8,6 +8,8 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import objectMatch from 'object-match';
 
+// import { matcher } from './util';
+
 class Lysis {
 
 	constructor(value, paths, mapErrorFn, context) {
@@ -35,6 +37,7 @@ class Lysis {
 			// TODO load-test lysis
 			// TODO rename paths to selectors and the resulting multiples are paths
 			// TODO implement mandatory/optional for multiple paths + test + DRY plz
+			// TODO fix the matches structure in the validateCombined (should be an object with selectors as key and match.value (or array) as value)
 			this.paths.forEach((path) => {
 				objectMatch(path, this.value)
 					.forEach((match) => {
