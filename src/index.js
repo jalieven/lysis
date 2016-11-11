@@ -8,7 +8,7 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import objectMatch from 'object-match';
 
-class Validation {
+class Lysis {
 
 	constructor(value, paths, mapErrorFn, context) {
 		this.value = value;
@@ -31,6 +31,8 @@ class Validation {
 
 	validate(fn, tip, ...args) {
 		if (isArray(this.paths)) {
+			// TODO remove object-match from the equation
+			// TODO load-test lysis
 			// TODO rename paths to selectors and the resulting multiples are paths
 			// TODO implement mandatory/optional for multiple paths + test + DRY plz
 			this.paths.forEach((path) => {
@@ -126,8 +128,12 @@ class Validation {
 
 }
 
-export const and = predicates => value => every(predicates, predicate => predicate(value));
+// TODO test these in different combinations
 
-export const or = predicates => value => some(predicates, predicate => predicate(value));
+export const and = (...predicates) => (value, ...args) => every(predicates, predicate => predicate(value, ...args));
 
-export default Validation;
+export const or = (...predicates) => (value, ...args) => some(predicates, predicate => predicate(value, ...args));
+
+export const not = predicate => (value, ...args) => !predicate(value, ...args);
+
+export default Lysis;

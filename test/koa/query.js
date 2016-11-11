@@ -4,7 +4,7 @@ import agent from 'supertest';
 import { isBoolean, isInt, toBoolean } from 'validator';
 
 import createApp from './util';
-import { and, or } from '../../src';
+import { and, or, not } from '../../src';
 
 describe('Lysis - Koa query validation', () => {
 
@@ -41,6 +41,46 @@ describe('Lysis - Koa query validation', () => {
 								'one',
 							],
 							tip: '"one" must be an even integer.',
+						},
+					],
+				});
+				return false;
+			})
+			.end(done);
+	});
+
+	it('check query invalid (composition)', (done) => {
+		const app = createApp();
+		app.router.get('/query', function* () {
+			this.checkQuery('one')
+				.validate(and(not(isInt), not(isBoolean)), '"one" cannot be an integer nor can it be a boolean.')
+				.sanitize(toBoolean);
+			this.checkQuery('two')
+				.validate(and(not(isInt), not(isBoolean)), '"two" cannot be an integer nor can it be a boolean.')
+				.sanitize(toBoolean);
+			if (this.errors) {
+				this.status = 400;
+				this.body = { validation: this.errors };
+			} else {
+				this.status = 200;
+				this.body = this.request.query;
+			}
+		});
+		agent(app.listen())
+			.get('/lysis/query')
+			.query({
+				one: 5,
+				two: 'truethy',
+			})
+			.expect(400)
+			.expect((res) => {
+				expect(res.body).to.eql({
+					validation: [
+						{
+							path: [
+								'one',
+							],
+							tip: '"one" cannot be an integer nor can it be a boolean.',
 						},
 					],
 				});
