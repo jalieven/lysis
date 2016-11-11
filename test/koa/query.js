@@ -13,10 +13,10 @@ describe('Lysis - Koa query validation', () => {
 		app.router.get('/query', function* () {
 			const isEven = v => v % 2 === 0;
 			this.checkQuery('one')
-				.validate(and([isInt, isEven]), '"one" must be an even integer.')
+				.validate(and(isInt, isEven), '"one" must be an even integer.')
 				.sanitize(toBoolean);
 			this.checkQuery('two')
-				.validate(and([isInt, isEven]), '"two" must be an even integer.')
+				.validate(and(isInt, isEven), '"two" must be an even integer.')
 				.sanitize(toBoolean);
 			if (this.errors) {
 				this.status = 400;
@@ -95,7 +95,7 @@ describe('Lysis - Koa query validation', () => {
 			const errMapping = (match, tip) =>
 				({ path: match.path, name: match.key, message: `${match.path.join('/')} with value of "${match.value}" must be a boolean or an integer!` });
 			this.checkQuery(['one', 'two', 'three', 'four.*'], errMapping)
-				.validate(or([isBoolean, isInt]), '"one" must be a boolean or an integer.')
+				.validate(or(isBoolean, isInt), '"one" must be a boolean or an integer.')
 				.sanitize(toBoolean);
 			if (this.errors) {
 				this.status = 400;
@@ -162,7 +162,7 @@ describe('Lysis - Koa query validation', () => {
 			const errMapping = (match, tip) =>
 				({ name: match.key, message: `${match.key} with value of "${match.value}" must be a boolean or an integer!` });
 			this.checkQuery(['one', 'two', 'three', 'four.*'], errMapping)
-				.validate(or([isBoolean, isInt]), '"one" must be a boolean or an integer.')
+				.validate(or(isBoolean, isInt), '"one" must be a boolean or an integer.')
 				.sanitize(toBoolean);
 			if (this.errors) {
 				this.status = 400;
