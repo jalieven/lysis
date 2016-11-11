@@ -220,9 +220,9 @@ Prints out:
 
 ```Json
 {
-	one: false,
-	two: true,
-	three: true
+	"one": false,
+	"two": true,
+	"three": true
 }
 ```
 
