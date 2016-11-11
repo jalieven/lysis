@@ -79,7 +79,12 @@ console.log(validationErrors);
 Prints out:
 
 ```Json
-[ { path: [ 'today' ], tip: 'Today must be weekend!' } ]
+[
+	{
+		"path": [ "today" ],
+		"tip": "Today must be weekend!"
+	}
+]
 ```
 
 ### Optional/mandatory validation
@@ -97,7 +102,12 @@ console.log(validationErrors);
 Prints out:
 
 ```Json
-[ { path: 'id', tip: 'id is mandatory.' } ]
+[
+	{
+		"path": "id",
+		"tip": "id is mandatory."
+	}
+]
 ```
 
 Making it optional by calling the optional method before the validate method:
@@ -107,6 +117,28 @@ const validationErrors = new Lysis(toValidate, 'id')
 	.optional()
 	.validate(isInteger, 'id must be an integer.')
 	.errors();
+```
+
+Customize the mandatory validation message:
+
+```Javascript
+const toValidate = {};
+const mandatoryMapper = path => ({ message: `${path} is mandatory, man!!!` });
+const validationErrors = new Lysis(toValidate, 'one.two.three')
+	.mandatory(mandatoryMapper)
+	.validate(isInteger, 'id must be an integer.')
+	.errors();
+console.log(validationErrors);
+```
+
+Prints out:
+
+```Json
+[
+	{
+		"message": "one.two.three is mandatory, man!!!"
+	}
+]
 ```
 
 ### Custom error messages
@@ -151,9 +183,9 @@ Prints out:
 
 ```Json
 {
-	one: [
-		{ two: '&lt;span&gt;&lt;p&gt;Blablabla&lt;p&gt;&lt;&#x2F;span&gt;' },
-		{ two: '&lt;script&gt;alert(&quot;bla&quot;)&lt;&#x2F;script&gt;' }
+	"one": [
+		{ "two": "&lt;span&gt;&lt;p&gt;Blablabla&lt;p&gt;&lt;&#x2F;span&gt;" },
+		{ "two": "&lt;script&gt;alert(&quot;bla&quot;)&lt;&#x2F;script&gt;" }
 	]
 }
 ```
