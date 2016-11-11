@@ -10,7 +10,7 @@ describe('Lysis - Koa header validation', () => {
 	it('check headers invalid', (done) => {
 		const app = createApp();
 		app.router.get('/headers', function* () {
-			this.validateHeader('int')
+			this.checkHeader('int')
 				.validate(isInt, '"int" header must be an integer.')
 				.sanitize(toInt, 10);
 			if (this.errors) {
@@ -43,7 +43,7 @@ describe('Lysis - Koa header validation', () => {
 	it('check headers sanitized', (done) => {
 		const app = createApp();
 		app.router.get('/headers', function* () {
-			this.validateHeader('int')
+			this.checkHeader('int')
 				.validate(isInt, '"int" header must be an integer.')
 				.sanitize(toInt, 10);
 			if (this.errors) {

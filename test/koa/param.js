@@ -12,7 +12,7 @@ describe('Lysis - Koa param validation', () => {
 		app.router.get('/param/:id', function* () {
 			const errMapping = (match, tip) =>
 				({ name: 'id', message: `${match.key} with value of "${match.value}" is not an integer!`, tip });
-			this.validateParam('id', errMapping)
+			this.checkParam('id', errMapping)
 				.validate(isInt, '"id" must be an integer.')
 				.sanitize(toInt, 10);
 			if (this.errors) {
@@ -45,7 +45,7 @@ describe('Lysis - Koa param validation', () => {
 	it('check param sanitized', (done) => {
 		const app = createApp();
 		app.router.get('/param/:id', function* () {
-			this.validateParam('id')
+			this.checkParam('id')
 				.validate(isInt, '"id" must be an integer.')
 				.sanitize(toInt, 10);
 			if (this.errors) {

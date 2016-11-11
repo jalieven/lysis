@@ -4,17 +4,17 @@ import Validation from '.';
 
 export const validate = (app) => {
 	/* eslint-disable no-param-reassign */
-	app.context.validateQuery = function (paths, mapErrorFn) {
-		return new Validation(this, this.request.query, paths, mapErrorFn);
+	app.context.checkQuery = function (paths, mapErrorFn) {
+		return new Validation(this.request.query, paths, mapErrorFn, this);
 	};
-	app.context.validateParam = function (paths, mapErrorFn) {
-		return new Validation(this, this.params, paths, mapErrorFn);
+	app.context.checkParam = function (paths, mapErrorFn) {
+		return new Validation(this.params, paths, mapErrorFn, this);
 	};
-	app.context.validateHeader = function (paths, mapErrorFn) {
-		return new Validation(this, this.headers, paths, mapErrorFn);
+	app.context.checkHeader = function (paths, mapErrorFn) {
+		return new Validation(this.headers, paths, mapErrorFn, this);
 	};
-	app.context.validateBody = function (paths, mapErrorFn) {
-		return new Validation(this, this.request.body, paths, mapErrorFn);
+	app.context.checkBody = function (paths, mapErrorFn) {
+		return new Validation(this.request.body, paths, mapErrorFn, this);
 	};
 	/* eslint-enable no-param-reassign */
 };

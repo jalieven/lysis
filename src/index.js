@@ -10,11 +10,11 @@ import objectMatch from 'object-match';
 
 class Validation {
 
-	constructor(context, value, paths, mapErrorFn) {
-		this.context = context;
+	constructor(value, paths, mapErrorFn, context) {
 		this.value = value;
 		this.paths = paths;
 		this.mapErrorFn = mapErrorFn;
+		this.context = context || {};
 		this.isOptional = false;
 	}
 

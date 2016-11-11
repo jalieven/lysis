@@ -1,13 +1,45 @@
 'use strict';
 
 import agent from 'supertest';
-import { isBoolean, isInt, toBoolean } from 'validator';
+import { isBoolean, isInt, toBoolean, isURL, escape } from 'validator';
 
 import Validation, { and, or } from '../src';
 
 describe('Lysis - Standalone validation', () => {
 
-	it('check validateCombined', (done) => {
+	it('check validate', () => {
+		const toValidate = {
+			one: 'ftp://somewhere.com',
+			two: 'https://www.google.com',
+		};
+		const errorMapper = (match) => ({ message: `${match.key} with value of "${match.value}" is not a valid HTTP url!` });
+		const validationErrors = new Validation(toValidate, ['one', 'two'], errorMapper)
+			.validate(isURL, 'Please provide a valid url.', { protocols: ['http','https'] })
+			.errors();
+		expect(validationErrors).to.eql([
+			{
+				message: `one with value of "${toValidate.one}" is not a valid HTTP url!`,
+			},
+		]);
+	});
+
+	it('check sanitize', () => {
+		const toSanitize = {
+			one: [
+				{ two: '<span><p>Blablabla<p></span>' },
+				{ two: '<script>alert("bla")</script>' },
+			],
+		};
+		new Validation(toSanitize, 'one.*.two').sanitize(escape);
+		expect(toSanitize).to.eql({
+			one: [
+				{ two: '&lt;span&gt;&lt;p&gt;Blablabla&lt;p&gt;&lt;&#x2F;span&gt;' },
+				{ two: '&lt;script&gt;alert(&quot;bla&quot;)&lt;&#x2F;script&gt;' },
+			]
+		});
+	});
+
+	it('check validateCombined', () => {
 		const toValidate = {
 			one: 'one',
 			two: {
@@ -17,7 +49,7 @@ describe('Lysis - Standalone validation', () => {
 				],
 			},
 		};
-		const validation = new Validation({}, toValidate, ['one', 'two.three.*.four']);
+		const validation = new Validation(toValidate, ['one', 'two.three.*.four']);
 		const validationFn = (matches, fortyFive, sixyNine) => {
 			expect(matches).to.eql([
 				{
@@ -90,7 +122,6 @@ describe('Lysis - Standalone validation', () => {
 				tip: 'The combination of one and fours is wrong.',
 			},
 		]);
-		done();
 	});
 
 });

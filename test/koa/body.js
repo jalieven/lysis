@@ -10,7 +10,7 @@ describe('Lysis - Koa body validation', () => {
 	it('check body invalid (part 1)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.mandatory()
 				.validate(isInt, '"three" must be an integer.')
 				.sanitize(toInt, 10);
@@ -53,7 +53,7 @@ describe('Lysis - Koa body validation', () => {
 	it('check body invalid (part 2)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.validate(isInt, '"three" must be an integer.')
 				.validate(three => three < 0, '"three" must be negative.')
 				.sanitize(toInt, 10);
@@ -96,11 +96,11 @@ describe('Lysis - Koa body validation', () => {
 	it('check body invalid (part 3)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.validate(isInt, '"three" must be an integer.')
 				.validate(three => three < 0, '"three" must be negative.')
 				.sanitize(toInt, 10);
-			this.validateBody('one.four.*.five.six')
+			this.checkBody('one.four.*.five.six')
 				.validate(isFloat, '"six" must be a float.')
 				.sanitize(v => toFloat(v));
 			if (this.errors) {
@@ -174,7 +174,7 @@ describe('Lysis - Koa body validation', () => {
 	it('check body invalid (part 4)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.validate(isInt, '"three" must be an integer.')
 				.sanitize(toInt, 10);
 			if (this.errors) {
@@ -206,7 +206,7 @@ describe('Lysis - Koa body validation', () => {
 	it('check body invalid (part 5)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.optional()
 				.validate(isInt, '"three" must be an integer.')
 				.sanitize(toInt, 10);
@@ -233,7 +233,7 @@ describe('Lysis - Koa body validation', () => {
 		const app = createApp();
 		app.router.post('/body', function* () {
 			const mandatoryMapping = path => ({ message: `${path} is mandatory!!!` });
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.mandatory(mandatoryMapping)
 				.validate(isInt, '"three" must be an integer.')
 				.sanitize(toInt, 10);
@@ -265,7 +265,7 @@ describe('Lysis - Koa body validation', () => {
 	it('check body sanitized (part 1)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.validate(isInt, '"three" must be an integer.')
 				.validate(three => three < 0, '"three" must be negative.')
 				.sanitize(toInt, 10);
@@ -303,7 +303,7 @@ describe('Lysis - Koa body validation', () => {
 	it('check body sanitized (part 2)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.sanitize(toInt, 10);
 			if (this.errors) {
 				this.status = 400;
@@ -339,7 +339,7 @@ describe('Lysis - Koa body validation', () => {
 	it('check body sanitized (part 3)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('one.*.three')
+			this.checkBody('one.*.three')
 				.sanitize(toInt, 10);
 			if (this.errors) {
 				this.status = 400;
@@ -367,7 +367,7 @@ describe('Lysis - Koa body validation', () => {
 	it('check body sanitized (part 4)', (done) => {
 		const app = createApp();
 		app.router.post('/body', function* () {
-			this.validateBody('*.one.two.three')
+			this.checkBody('*.one.two.three')
 				.sanitize(toInt, 10)
 				.sanitize(v => v / 5);
 			if (this.errors) {
