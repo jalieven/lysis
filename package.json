@@ -1,6 +1,6 @@
 {
   "name": "lysis",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Flexible validation for Koa",
   "main": "index.js",
   "scripts": {
