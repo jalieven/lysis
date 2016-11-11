@@ -12,9 +12,9 @@ describe('Lysis - Standalone validation', () => {
 			one: 'ftp://somewhere.com',
 			two: 'https://www.google.com',
 		};
-		const errorMapper = (match) => ({ message: `${match.key} with value of "${match.value}" is not a valid HTTP url!` });
+		const errorMapper = match => ({ message: `${match.key} with value of "${match.value}" is not a valid HTTP url!` });
 		const validationErrors = new Validation(toValidate, ['one', 'two'], errorMapper)
-			.validate(isURL, 'Please provide a valid url.', { protocols: ['http','https'] })
+			.validate(isURL, 'Please provide a valid url.', { protocols: ['http', 'https'] })
 			.errors();
 		expect(validationErrors).to.eql([
 			{
@@ -35,7 +35,7 @@ describe('Lysis - Standalone validation', () => {
 			one: [
 				{ two: '&lt;span&gt;&lt;p&gt;Blablabla&lt;p&gt;&lt;&#x2F;span&gt;' },
 				{ two: '&lt;script&gt;alert(&quot;bla&quot;)&lt;&#x2F;script&gt;' },
-			]
+			],
 		});
 	});
 
