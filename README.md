@@ -295,7 +295,32 @@ app.router.get('/headers', function* () {
 
 ### Express
 
-TODO express-validator has a nice API, extending req with checkBody, etc.
+Configure your express app with the 'validate' function:
+
+```Javascript
+const validate = require('lysis/express');
+const bodyParser = require('body-parser');
+
+const app = koa();
+app.use(bodyParser.json());
+app.use(validate);
+```
+
+Then use the convenience methods (checkHeader, checkParam, checkQuery and checkBody) in your routes:
+
+```Javascript
+app.post('/lysis/body', (req, res) => {
+	req.checkBody('one.*.three')
+		.mandatory()
+		.validate(isInt, '"three" must be an integer.')
+		.sanitize(toInt, 10);
+	if (req.errors) {
+		res.status(400).json({ validation: req.errors });
+	} else {
+		res.status(200).json(req.body);
+	}
+})
+```
 
 ## API
 
