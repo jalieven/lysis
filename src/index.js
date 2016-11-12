@@ -94,9 +94,10 @@ class Lysis {
 		return this;
 	}
 
-	validateCombined(fn, tip, ...args) {
+	validateCombined(fn, tip, terseMatchValues, ...args) {
+		// TODO implement terseMatchValues
 		if (isArray(this.selectors)) {
-			const combinedMatches = this.selectors.map(selector => {
+			const combinedMatches = this.selectors.map((selector) => {
 				const matches = matcher(selector, this.value);
 				if (isEmpty(matches) && !this.isOptional) {
 					if (!this.context.errors) {
