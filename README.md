@@ -294,23 +294,71 @@ app.router.get('/headers', function* () {
 
 ### Express
 
-TODO express-validator has a nice API
+TODO express-validator has a nice API, extending req with checkBody, etc.
 
 ## API
 
-### `Lysis(key, [options])`
+### Constructor `Lysis(value, selectors, mapErrorFunction, context)`
 
+- `value` - the object/array that must be validated/sanitized
+- `selectors` - string or array with strings containing selectors pattern that point to parts of the 'value'. eg. if the value is the following object:
 
+```Json
+const value = {
+	one: {
+		two: [
+			{
+				three: 'right here',
+			},
+		],
+		four: 'here',
+	},
+};
+```
 
-### `ref(key, [options])`
+Then the selectors: ['one.two.*.three', 'one.four'] yield ['right here'] and ['here'] respectively.
 
-Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
-so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
-References support the following arguments:
-- `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
-  their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
-  which is looked up in the `context` option object.
-- `options` - optional settings:
-    - `separator` - overrides the default `.` hierarchy separator.
-    - `contextPrefix` - overrides the default `$` context prefix signifier.
-    - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
+- `mapErrorFunction` - function that maps the error when a validation error has been encountered. The signature of this function is: mapErrorFunction(match, tip) where 'match' has the following structure (in case of selector 'one.two.*.three'):
+
+```Json
+{
+	"path": ["one", "two", "0", "three"],
+	"parent": { "three":"right here" },
+	"value": "right here",
+	"key": "three"
+}
+```
+and tip is the string provided in the 'validate' or 'validateCombined' methods.
+
+- `context` - optional object where the validation/mandatory errors will be added.
+
+### Method `mandatory(mapMandatoryFunction)`
+
+Indicates it there are no matches found for the provided selector Lysis will add a mandatory error onto the context errors array.
+
+- `mapMandatoryFunction` - function that maps the mandatory-error when no match was found. The signature of this function is: mapMandatoryFunction(selector).
+
+### Method `optional()`
+
+Indication that if no matches are found for the selector the validation will be ignored.
+
+### Method `validate(func, tip, ...args)`
+
+- `func` - function with signature func(matchValue, ...args) that returns true (if matchValue is valid) or false (if invalid and an error must be added to the context object).
+- `tip` - string containing info about the invalid value and how to correct it.
+- `args` - extra arguments to be used in the validation function 'func'.
+
+### Method `validateCombined(func, tip, ...args)`
+
+When different parts of the object/array under validation must be validated in combination. Calling this method only makes sense when you provide an array with selectors (or a selector into an array) in the Lysis constructor! The signature of the func method is slightly different than the validate to accomodate for the multiple matches: TODO fill in signature.
+
+### Method `sanitize(func, ...args)`
+
+This method will run the provided sanitization function on all the matches found by the provided selectors in the Lysis constructor and set the result on the 'value' object/array. It will therefore alter the 'value' object/array provided in the Lysis constructor.
+
+- `func` - function with signature func(matchValue, ...args)
+- `args` - extra arguments to be used in the sanitization function 'func'.
+
+### Method `errors`
+
+Returns an array with the validation/mandatory errors or returns undefined when everthing is valid.

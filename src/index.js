@@ -33,7 +33,6 @@ class Lysis {
 	validate(fn, tip, ...args) {
 		if (isArray(this.selectors)) {
 			// TODO load-test lysis
-			// TODO rename paths to selectors and the resulting multiples are paths
 			// TODO implement mandatory/optional for multiple paths + test + DRY plz
 			// TODO fix the matches structure in the validateCombined (should be an object with selectors as key and match.value (or array) as value)
 			this.selectors.forEach((selector) => {
@@ -87,6 +86,7 @@ class Lysis {
 	}
 
 	validateCombined(fn, tip, ...args) {
+		// TODO what about mandatory in this case?
 		if (isArray(this.selectors)) {
 			const matches = this.selectors.map(selector => ({ selector, matches: matcher(selector, this.value) }));
 			const valid = fn(matches, ...args);
