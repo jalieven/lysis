@@ -1,6 +1,6 @@
 {
 	"name": "lysis",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "Composable validation for any environment",
 	"main": "index.js",
 	"scripts": {
@@ -22,6 +22,9 @@
 		"express",
 		"validate",
 		"validation",
+		"validator",
+		"sanitize",
+		"sanitization",
 		"deep",
 		"functional composition",
 		"json",

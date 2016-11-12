@@ -305,18 +305,18 @@ TODO express-validator has a nice API, extending req with checkBody, etc.
 
 ```Json
 const value = {
-	one: {
-		two: [
+	"one": {
+		"two": [
 			{
-				three: 'right here',
+				"three": "right here",
 			},
 		],
-		four: 'here',
+		"four": "here",
 	},
 };
 ```
 
-Then the selectors: ['one.two.*.three', 'one.four'] yield ['right here'] and ['here'] respectively.
+Then the selectors: ['one.two.*.three', 'one.four'] yield ['right here'] and ['here'] as matchValues respectively.
 
 - `mapErrorFunction` - function that maps the error when a validation error has been encountered. The signature of this function is: mapErrorFunction(match, tip) where 'match' has the following structure (in case of selector 'one.two.*.three'):
 
