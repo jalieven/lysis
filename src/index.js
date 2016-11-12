@@ -32,12 +32,21 @@ class Lysis {
 
 	validate(fn, tip, ...args) {
 		if (isArray(this.selectors)) {
-			// TODO load-test lysis
-			// TODO implement mandatory/optional for multiple paths + test + DRY plz
 			// TODO fix the matches structure in the validateCombined (should be an object with selectors as key and match.value (or array) as value)
 			this.selectors.forEach((selector) => {
-				matcher(selector, this.value)
-					.forEach((match) => {
+				const matches = matcher(selector, this.value);
+				if (isEmpty(matches) && !this.isOptional) {
+					if (!this.context.errors) {
+						this.context.errors = [];
+					}
+					if (this.mapMandatoryFn && isFunction(this.mapMandatoryFn)) {
+						const mandatoryErr = this.mapMandatoryFn(this.selectors);
+						this.context.errors.push(mandatoryErr);
+					} else {
+						this.context.errors.push({ selector, tip: `${selector} is mandatory.` });
+					}
+				} else {
+					matches.forEach((match) => {
 						const valid = fn(match.value, ...args);
 						if (!valid) {
 							if (!this.context.errors) {
@@ -51,7 +60,7 @@ class Lysis {
 							}
 						}
 					});
-				// TODO mandatory doesn't work for this case: check that for each selector there is a match!
+				}
 			});
 		} else {
 			const matches = matcher(this.selectors, this.value);

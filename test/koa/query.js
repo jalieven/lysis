@@ -127,6 +127,10 @@ describe('Lysis - Koa query validation', () => {
 							message: 'one with value of "one" must be a boolean or an integer!',
 						},
 						{
+							selector: 'two',
+							tip: 'two is mandatory.',
+						},
+						{
 							path: [
 								'three',
 							],

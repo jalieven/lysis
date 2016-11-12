@@ -166,7 +166,7 @@ describe('Lysis - Standalone validation', () => {
 		]);
 	});
 
-	it.skip('checks multiple selectors and mandatory', () => {
+	it('checks multiple selectors and mandatory', () => {
 		const toValidate = {
 			today: '2016-08-11T19:36:01.323Z',
 		};
@@ -179,8 +179,8 @@ describe('Lysis - Standalone validation', () => {
 			.validate(isWeekend, 'Today must be weekend!')
 			.errors();
 		expect(validationErrors).to.eql([
-			{ path: ['tomorrow'], tip: 'tomorrow is mandatory.' },
 			{ path: ['today'], tip: 'Today must be weekend!' },
+			{ selector: 'tomorrow', tip: 'tomorrow is mandatory.' },
 		]);
 	});
 
