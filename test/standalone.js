@@ -119,7 +119,7 @@ describe('Lysis - Standalone validation', () => {
 			.errors();
 		expect(validationErrors).to.eql([
 			{
-				paths: ['one', 'two.three.*.four'],
+				selectors: ['one', 'two.three.*.four'],
 				tip: 'The combination of one and fours is wrong.',
 			},
 		]);
@@ -162,6 +162,24 @@ describe('Lysis - Standalone validation', () => {
 			.validate(isWeekend, 'Today must be weekend!')
 			.errors();
 		expect(validationErrors).to.eql([
+			{ path: ['today'], tip: 'Today must be weekend!' },
+		]);
+	});
+
+	it.skip('checks multiple selectors and mandatory', () => {
+		const toValidate = {
+			today: '2016-08-11T19:36:01.323Z',
+		};
+		const isWeekend = (value) => {
+			const day = moment(value).day();
+			return (day === 6) || (day === 0);
+		};
+		const validationErrors = new Lysis(toValidate, ['today', 'tomorrow'])
+			.mandatory()
+			.validate(isWeekend, 'Today must be weekend!')
+			.errors();
+		expect(validationErrors).to.eql([
+			{ path: ['tomorrow'], tip: 'tomorrow is mandatory.' },
 			{ path: ['today'], tip: 'Today must be weekend!' },
 		]);
 	});

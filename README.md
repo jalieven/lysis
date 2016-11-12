@@ -111,7 +111,7 @@ Prints out:
 ]
 ```
 
-Making it optional by calling the optional method before the validate method:
+Make it optional by calling the 'optional' method before the 'validate' method:
 
 ```Javascript
 const validationErrors = new Lysis(toValidate, 'id')
@@ -166,7 +166,7 @@ const validationErrors = new Lysis(toValidate, ['one', 'two'])
 
 ### Sanitization
 
-You can use lysis for sanitizing your object:
+You can use lysis for sanitizing your objects:
 
 ```Javascript
 import { escape } from 'validator';
@@ -298,4 +298,19 @@ TODO express-validator has a nice API
 
 ## API
 
-TODO
+### `Lysis(key, [options])`
+
+
+
+### `ref(key, [options])`
+
+Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
+so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
+References support the following arguments:
+- `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
+  their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
+  which is looked up in the `context` option object.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator.
+    - `contextPrefix` - overrides the default `$` context prefix signifier.
+    - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.

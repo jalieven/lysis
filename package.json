@@ -1,7 +1,7 @@
 {
   "name": "lysis",
   "version": "0.0.3",
-  "description": "Flexible validation for Koa",
+  "description": "Composable validation for any environment",
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf dist && mkdir dist",

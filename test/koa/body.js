@@ -193,7 +193,7 @@ describe('Lysis - Koa body validation', () => {
 				expect(res.body).to.eql({
 					validation: [
 						{
-							path: 'one.*.three',
+							selector: 'one.*.three',
 							tip: 'one.*.three is mandatory.',
 						},
 					],

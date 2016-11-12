@@ -11,9 +11,9 @@ import { matcher } from './util';
 
 class Lysis {
 
-	constructor(value, paths, mapErrorFn, context) {
+	constructor(value, selectors, mapErrorFn, context) {
 		this.value = value;
-		this.paths = paths;
+		this.selectors = selectors;
 		this.mapErrorFn = mapErrorFn;
 		this.context = context || {};
 		this.isOptional = false;
@@ -31,13 +31,13 @@ class Lysis {
 	}
 
 	validate(fn, tip, ...args) {
-		if (isArray(this.paths)) {
+		if (isArray(this.selectors)) {
 			// TODO load-test lysis
 			// TODO rename paths to selectors and the resulting multiples are paths
 			// TODO implement mandatory/optional for multiple paths + test + DRY plz
 			// TODO fix the matches structure in the validateCombined (should be an object with selectors as key and match.value (or array) as value)
-			this.paths.forEach((path) => {
-				matcher(path, this.value)
+			this.selectors.forEach((selector) => {
+				matcher(selector, this.value)
 					.forEach((match) => {
 						const valid = fn(match.value, ...args);
 						if (!valid) {
@@ -52,18 +52,19 @@ class Lysis {
 							}
 						}
 					});
+				// TODO mandatory doesn't work for this case: check that for each selector there is a match!
 			});
 		} else {
-			const matches = matcher(this.paths, this.value);
+			const matches = matcher(this.selectors, this.value);
 			if (isEmpty(matches) && !this.isOptional) {
 				if (!this.context.errors) {
 					this.context.errors = [];
 				}
 				if (this.mapMandatoryFn && isFunction(this.mapMandatoryFn)) {
-					const mandatoryErr = this.mapMandatoryFn(this.paths);
+					const mandatoryErr = this.mapMandatoryFn(this.selectors);
 					this.context.errors.push(mandatoryErr);
 				} else {
-					this.context.errors.push({ path: this.paths, tip: `${this.paths} is mandatory.` });
+					this.context.errors.push({ selector: this.selectors, tip: `${this.selectors} is mandatory.` });
 				}
 			} else {
 				matches.forEach((match) => {
@@ -86,8 +87,8 @@ class Lysis {
 	}
 
 	validateCombined(fn, tip, ...args) {
-		if (isArray(this.paths)) {
-			const matches = this.paths.map(path => ({ selector: path, matches: matcher(path, this.value) }));
+		if (isArray(this.selectors)) {
+			const matches = this.selectors.map(selector => ({ selector, matches: matcher(selector, this.value) }));
 			const valid = fn(matches, ...args);
 			if (!valid) {
 				if (!this.context.errors) {
@@ -97,7 +98,7 @@ class Lysis {
 					const err = this.mapErrorFn(matches, tip);
 					this.context.errors.push(err);
 				} else {
-					this.context.errors.push({ paths: matches.map(p => p.selector), tip });
+					this.context.errors.push({ selectors: matches.map(p => p.selector), tip });
 				}
 			}
 		} else {
@@ -107,15 +108,15 @@ class Lysis {
 	}
 
 	sanitize(fn, ...args) {
-		if (isArray(this.paths)) {
-			this.paths.forEach((path) => {
-				matcher(path, this.value)
+		if (isArray(this.selectors)) {
+			this.selectors.forEach((selector) => {
+				matcher(selector, this.value)
 					.forEach((match) => {
 						set(this.value, match.path, fn(match.value, ...args));
 					});
 			});
 		} else {
-			matcher(this.paths, this.value)
+			matcher(this.selectors, this.value)
 				.forEach((match) => {
 					set(this.value, match.path, fn(match.value, ...args));
 				});
