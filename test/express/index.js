@@ -1,3 +1,3 @@
 'use strict';
 
-import './body.js';
+import './body';

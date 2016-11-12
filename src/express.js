@@ -3,6 +3,7 @@
 import Lysis from '.';
 
 export const validate = (req, res, next) => {
+	/* eslint-disable no-param-reassign */
 	req.checkQuery = function (paths, mapErrorFn) {
 		return new Lysis(req.query, paths, mapErrorFn, req);
 	};
@@ -15,5 +16,6 @@ export const validate = (req, res, next) => {
 	req.checkBody = function (paths, mapErrorFn) {
 		return new Lysis(req.body, paths, mapErrorFn, req);
 	};
+	/* eslint-enable no-param-reassign */
 	next();
 };
