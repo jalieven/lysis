@@ -95,19 +95,32 @@ class Lysis {
 	}
 
 	validateCombined(fn, tip, ...args) {
-		// TODO what about mandatory in this case?
 		if (isArray(this.selectors)) {
-			const matches = this.selectors.map(selector => ({ selector, matches: matcher(selector, this.value) }));
-			const valid = fn(matches, ...args);
+			const combinedMatches = this.selectors.map(selector => {
+				const matches = matcher(selector, this.value);
+				if (isEmpty(matches) && !this.isOptional) {
+					if (!this.context.errors) {
+						this.context.errors = [];
+					}
+					if (this.mapMandatoryFn && isFunction(this.mapMandatoryFn)) {
+						const mandatoryErr = this.mapMandatoryFn(selector);
+						this.context.errors.push(mandatoryErr);
+					} else {
+						this.context.errors.push({ selector, tip: `${selector} is mandatory.` });
+					}
+				}
+				return { selector, matches };
+			});
+			const valid = fn(combinedMatches, ...args);
 			if (!valid) {
 				if (!this.context.errors) {
 					this.context.errors = [];
 				}
 				if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
-					const err = this.mapErrorFn(matches, tip);
+					const err = this.mapErrorFn(combinedMatches, tip);
 					this.context.errors.push(err);
 				} else {
-					this.context.errors.push({ selectors: matches.map(p => p.selector), tip });
+					this.context.errors.push({ selectors: combinedMatches.map(p => p.selector), tip });
 				}
 			}
 		} else {

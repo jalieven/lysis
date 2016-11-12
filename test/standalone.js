@@ -125,6 +125,71 @@ describe('Lysis - Standalone validation', () => {
 		]);
 	});
 
+	it('check validateCombined that is mandatory', () => {
+		const toValidate = {
+			two: {
+				three: [
+					{ four: 1 },
+					{ four: 0 },
+				],
+			},
+		};
+		const lysis = new Lysis(toValidate, ['one', 'two.three.*.four']);
+		const validationFn = (matches) => {
+			expect(matches).to.eql([
+				{
+					selector: 'one',
+					matches: [],
+				},
+				{
+					selector: 'two.three.*.four',
+					matches: [
+						{
+							path: [
+								'two',
+								'three',
+								'0',
+								'four',
+							],
+							value: 1,
+							parent: {
+								four: 1,
+							},
+							key: 'four',
+						},
+						{
+							path: [
+								'two',
+								'three',
+								'1',
+								'four',
+							],
+							value: 0,
+							parent: {
+								four: 0,
+							},
+							key: 'four',
+						},
+					],
+				},
+			]);
+			return false;
+		};
+		const validationErrors = lysis
+			.validateCombined(validationFn, 'The combination of one and fours is wrong.')
+			.errors();
+		expect(validationErrors).to.eql([
+			{
+				selector: 'one',
+				tip: 'one is mandatory.',
+  			},
+			{
+				selectors: ['one', 'two.three.*.four'],
+				tip: 'The combination of one and fours is wrong.',
+			},
+		]);
+	});
+
 	it('checks functional combinations', () => {
 		const toValidate = {
 			one: 'no_boolean_here',
