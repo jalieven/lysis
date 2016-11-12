@@ -3,6 +3,7 @@
 import chai from 'chai';
 
 import './koa';
+import './express';
 import './util';
 import './standalone';
 

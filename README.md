@@ -1,7 +1,7 @@
 # lysis
 Lysis guards your code from integrity compromising payloads.
 
-Lysis works with Koa, Express or integrates easily with any other frameworks.
+Integrates with Koa, Express or any other frameworks or environment.
 
 Features:
 - functional composition (lysis is not a wrapper for another framework)
@@ -9,6 +9,7 @@ Features:
 - customizable error/mandatory messages
 - check different parts of your payload in a combined predicate function
 - get the exact path to the invalid field
+- easily compose predicate functions
 - only depends on lodash
 
 ## Installation
