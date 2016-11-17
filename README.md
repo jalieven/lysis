@@ -145,23 +145,47 @@ Prints out:
 
 ### Custom error messages
 
-TODO
+Customize the validation messages:
+
+```Javascript
+const toValidate = {
+	one: 'ftp://somewhere.com',
+	two: 'https://www.google.com',
+};
+const errorMapper = (match, tip) =>
+	({ message: `'${match.key}' with value of '${match.value}' is not a valid HTTP url!`, tip });
+const validationErrors = new Lysis(toValidate, ['one', 'two'], errorMapper)
+	.validate(isURL, 'Please provide a valid url (only protocols http or https are allowed).', { protocols: ['http', 'https'] })
+	.errors();
+console.log(validationErrors);
+```
+
+Prints out:
+
+```Json
+[
+	{
+		"message": "'one' with value of 'ftp://somewhere.com' is not a valid HTTP url!",
+		"tip": "Please provide a valid url (only protocols http or https are allowed)."
+	}
+]
+```
 
 ### Combined validation
 
-When you want to validate different parts of your object, use the 'validateCombined' method:
+When you want to validate different parts of your object in one predicate function, use the 'validateCombined' method:
 
 ```Javascript
 const toValidate = {
 	one: true,
 	two: false
 };
-const validationFn = (matches) => {
+const allTruthy = (matches) => {
 	const { one, two } = matches;
 	return one && two;
 };
 const validationErrors = new Lysis(toValidate, ['one', 'two'])
-	.validateCombined(validationFn, 'The combination of one and two is wrong.')
+	.validateCombined(allTruthy, 'The combination of one and two is wrong.')
 	.errors();
 ```
 
@@ -197,6 +221,7 @@ Be aware that the sanitize method will alter your object, it does not return a n
 You can provide additional arguments to the sanitize function:
 
 ```Javascript
+import { toInt } from 'validator';
 new Lysis(toSanitize, 'one.*.two').sanitize(toInt, 10);
 ```
 
@@ -239,7 +264,7 @@ const toValidate = {
 	three: 'true'
 };
 const validationErrors = new Lysis(toValidate, ['one', 'two', 'three'])
-	.validate(and(not(isBoolean), not(isInt)), 'I cannot handle booleans or integers!')
+	.validate(and(not(isBoolean), not(isInt)), 'I cannot handle booleans nor integers!')
 	.errors();
 console.log(validationErrors);
 ```
@@ -252,13 +277,13 @@ Prints out:
 		"path": [
 			"two"
 		],
-		"tip": "I cannot handle booleans or integers!"
+		"tip": "I cannot handle booleans nor integers!"
 	},
 	{
 		"path": [
 			"three"
 		],
-		"tip": "I cannot handle booleans or integers!"
+		"tip": "I cannot handle booleans nor integers!"
 	}
 ]
 ```
