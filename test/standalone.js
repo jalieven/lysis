@@ -1,5 +1,6 @@
 'use strict';
 
+import map from 'lodash/map';
 import agent from 'supertest';
 import moment from 'moment';
 import { isBoolean, isInt, toBoolean, isURL, escape } from 'validator';
@@ -40,7 +41,7 @@ describe('Lysis - Standalone validation', () => {
 		});
 	});
 
-	it('check validateCombined', () => {
+	it('check validateCombined with mapErrorFunction', () => {
 		const toValidate = {
 			one: 'one',
 			two: {
@@ -50,8 +51,7 @@ describe('Lysis - Standalone validation', () => {
 				],
 			},
 		};
-		const lysis = new Lysis(toValidate, ['one', 'two.three.*.four']);
-		const validationFn = (matches, fortyFive, sixyNine) => {
+		const mapErrorFn = (matches, tip) => {
 			expect(matches).to.eql([
 				{
 					selector: 'one',
@@ -110,12 +110,20 @@ describe('Lysis - Standalone validation', () => {
 					],
 				},
 			]);
+			return { selectors: map(matches, p => p.selector), tip };
+		};
+		const lysis = new Lysis(toValidate, ['one', 'two.three.*.four'], mapErrorFn);
+		const validationFn = (matches, fortyFive, sixyNine) => {
+			expect(matches).to.eql({
+				one: ['one'],
+				'two.three.*.four': [1, 0],
+			});
 			expect(fortyFive).to.equal('45');
 			expect(sixyNine).to.equal(69);
 			return false;
 		};
 		const validationErrors = lysis
-			.validateCombined(validationFn, 'The combination of one and fours is wrong.', false, '45', 69)
+			.validateCombined(validationFn, 'The combination of one and fours is wrong.', '45', 69)
 			.errors();
 		expect(validationErrors).to.eql([
 			{
@@ -125,78 +133,14 @@ describe('Lysis - Standalone validation', () => {
 		]);
 	});
 
-	it('check validateCombined with terseMatches', () => {
-		const toValidate = {
-			one: 'one',
-			two: {
-				three: [
-					{ four: 1 },
-					{ four: 0 },
-				],
-			},
-		};
+	it('check validateCombined that is mandatory', () => {
+		const toValidate = {};
 		const lysis = new Lysis(toValidate, ['one', 'two.three.*.four']);
 		const validationFn = (matches) => {
 			expect(matches).to.eql({
-				one: ['one'],
-				'two.three.*.four': [1, 0],
+				one: [],
+				'two.three.*.four': [],
 			});
-			return true;
-		};
-		const validationErrors = lysis
-			.validateCombined(validationFn, 'The combination of one and fours is wrong.', true)
-			.errors();
-		expect(validationErrors).to.be('undefined');
-	});
-
-	it('check validateCombined that is mandatory', () => {
-		const toValidate = {
-			two: {
-				three: [
-					{ four: 1 },
-					{ four: 0 },
-				],
-			},
-		};
-		const lysis = new Lysis(toValidate, ['one', 'two.three.*.four']);
-		const validationFn = (matches) => {
-			expect(matches).to.eql([
-				{
-					selector: 'one',
-					matches: [],
-				},
-				{
-					selector: 'two.three.*.four',
-					matches: [
-						{
-							path: [
-								'two',
-								'three',
-								'0',
-								'four',
-							],
-							value: 1,
-							parent: {
-								four: 1,
-							},
-							key: 'four',
-						},
-						{
-							path: [
-								'two',
-								'three',
-								'1',
-								'four',
-							],
-							value: 0,
-							parent: {
-								four: 0,
-							},
-							key: 'four',
-						},
-					],
-				},
-			]);
 			return false;
 		};
 		const validationErrors = lysis
@@ -206,6 +150,10 @@ describe('Lysis - Standalone validation', () => {
 			{
 				selector: 'one',
 				tip: 'one is mandatory.',
+			},
+			{
+				selector: 'two.three.*.four',
+				tip: 'two.three.*.four is mandatory.',
 			},
 			{
 				selectors: ['one', 'two.three.*.four'],

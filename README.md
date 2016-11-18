@@ -369,7 +369,7 @@ const value = {
 
 Then the selectors: ['one.two.*.three', 'one.four'] yield ['right here'] and ['here'] as matchValues respectively.
 
-- `mapErrorFunction` - function that maps the error when a validation error has been encountered. The signature of this function is: mapErrorFunction(match, tip) where 'match' has the following structure (in case of selector 'one.two.*.three'):
+- `mapErrorFunction` - function that maps the error when a validation error has been encountered. The signature of this function is: mapErrorFunction(match, tip) where 'match' has the following structure when the validate is uses (in case of selector 'one.two.*.three'):
 
 ```Json
 {
@@ -379,7 +379,43 @@ Then the selectors: ['one.two.*.three', 'one.four'] yield ['right here'] and ['h
 	"key": "three"
 }
 ```
-and tip is the string provided in the 'validate' or 'validateCombined' methods.
+and tip is the string provided in the 'validate' method.
+
+If you use the validateCombined method the signature of the mapErrorFunction becomes mapErrorFunction(matches, tip) where the 'matches' has the following structure:
+
+```Json
+[
+	{
+		"selector": "one.two.*.three",
+		"matches": [
+			{
+				"path": ["one", "two", "0", "three"],
+				"parent": { "three": "right here" },
+				"value": "right here",
+				"key": "three"
+			},
+			{
+				"path": ["one", "two", "1", "three"],
+				"parent": { "three": "right here" },
+				"value": "right here",
+				"key": "three"
+			}
+		]
+	},
+	{
+		"selector": "one.four",
+		"matches": [
+			{
+				"path": ["one", "four"],
+				"parent": { "four": "here" },
+				"value": "here",
+				"key": "four"
+			}
+		]
+	}
+]
+```
+and tip is the string provided in the 'validateCombined' method.
 
 - `context` - optional object where the validation/mandatory errors will be added.
 

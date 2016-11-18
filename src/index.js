@@ -2,6 +2,7 @@
 
 import map from 'lodash/map';
 import forEach from 'lodash/forEach';
+import assign from 'lodash/assign';
 import set from 'lodash/set';
 import some from 'lodash/some';
 import every from 'lodash/every';
@@ -34,8 +35,7 @@ class Lysis {
 
 	validate(fn, tip, ...args) {
 		if (isArray(this.selectors)) {
-			// TODO fix the matches structure in the validateCombined (should be an object with selectors as key and match.value (or array) as value)
-			forEach(this.selectors, selector => {
+			forEach(this.selectors, (selector) => {
 				const matches = matcher(selector, this.value);
 				if (isEmpty(matches) && !this.isOptional) {
 					if (!this.context.errors) {
@@ -48,7 +48,7 @@ class Lysis {
 						this.context.errors.push({ selector, tip: `${selector} is mandatory.` });
 					}
 				} else {
-					forEach(matches, match => {
+					forEach(matches, (match) => {
 						const valid = fn(match.value, ...args);
 						if (!valid) {
 							if (!this.context.errors) {
@@ -77,7 +77,7 @@ class Lysis {
 					this.context.errors.push({ selector: this.selectors, tip: `${this.selectors} is mandatory.` });
 				}
 			} else {
-				forEach(matches, match => {
+				forEach(matches, (match) => {
 					const valid = fn(match.value, ...args);
 					if (!valid) {
 						if (!this.context.errors) {
@@ -96,10 +96,10 @@ class Lysis {
 		return this;
 	}
 
-	validateCombined(fn, tip, terseMatchValues, ...args) {
-		// TODO implement terseMatchValues
+	validateCombined(fn, tip, ...args) {
 		if (isArray(this.selectors)) {
-			const combinedMatches = map(this.selectors, selector => {
+			const functionMatches = {};
+			const combinedMatches = map(this.selectors, (selector) => {
 				const matches = matcher(selector, this.value);
 				if (isEmpty(matches) && !this.isOptional) {
 					if (!this.context.errors) {
@@ -112,9 +112,13 @@ class Lysis {
 						this.context.errors.push({ selector, tip: `${selector} is mandatory.` });
 					}
 				}
+				const values = map(matches, 'value');
+				const result = {};
+				result[selector] = values;
+				assign(functionMatches, result);
 				return { selector, matches };
 			});
-			const valid = fn(combinedMatches, ...args);
+			const valid = fn(functionMatches, ...args);
 			if (!valid) {
 				if (!this.context.errors) {
 					this.context.errors = [];
@@ -134,15 +138,15 @@ class Lysis {
 
 	sanitize(fn, ...args) {
 		if (isArray(this.selectors)) {
-			forEach(this.selectors, selector => {
+			forEach(this.selectors, (selector) => {
 				const matches = matcher(selector, this.value);
-				forEach(matches, match => {
+				forEach(matches, (match) => {
 					set(this.value, match.path, fn(match.value, ...args));
 				});
 			});
 		} else {
 			const matches = matcher(this.selectors, this.value);
-			forEach(matches, match => {
+			forEach(matches, (match) => {
 				set(this.value, match.path, fn(match.value, ...args));
 			});
 		}
