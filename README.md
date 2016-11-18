@@ -1,4 +1,8 @@
 # lysis
+
+[![build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
+
 Lysis guards your code from integrity compromising payloads.
 
 Integrates with Koa, Express or any other frameworks or environment.
