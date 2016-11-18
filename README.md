@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/jalieven/lysis.svg?branch=master)](https://travis-ci.org/jalieven/lysis)
 [![Coverage Status](https://coveralls.io/repos/github/jalieven/lysis/badge.svg)](https://coveralls.io/github/jalieven/lysis)
 
+[![NPM](https://nodei.co/npm/lysis.png)](https://npmjs.org/package/lysis)
+
 Lysis guards your code from integrity compromising payloads.
 
 Integrates with Koa, Express or any other frameworks or environment.
