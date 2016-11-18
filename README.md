@@ -1,7 +1,7 @@
 # lysis
 
-[![build status][travis-image]][travis-url]
-[![Test coverage][coveralls-image]][coveralls-url]
+[![Build Status](https://travis-ci.org/jalieven/lysis.svg?branch=master)](https://travis-ci.org/jalieven/lysis)
+[![Coverage Status](https://coveralls.io/repos/github/jalieven/lysis/badge.svg)](https://coveralls.io/github/jalieven/lysis)
 
 Lysis guards your code from integrity compromising payloads.
 
