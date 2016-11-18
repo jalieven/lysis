@@ -1,5 +1,7 @@
 'use strict';
 
+import map from 'lodash/map';
+import forEach from 'lodash/forEach';
 import set from 'lodash/set';
 import some from 'lodash/some';
 import every from 'lodash/every';
@@ -33,7 +35,7 @@ class Lysis {
 	validate(fn, tip, ...args) {
 		if (isArray(this.selectors)) {
 			// TODO fix the matches structure in the validateCombined (should be an object with selectors as key and match.value (or array) as value)
-			this.selectors.forEach((selector) => {
+			forEach(this.selectors, selector => {
 				const matches = matcher(selector, this.value);
 				if (isEmpty(matches) && !this.isOptional) {
 					if (!this.context.errors) {
@@ -46,7 +48,7 @@ class Lysis {
 						this.context.errors.push({ selector, tip: `${selector} is mandatory.` });
 					}
 				} else {
-					matches.forEach((match) => {
+					forEach(matches, match => {
 						const valid = fn(match.value, ...args);
 						if (!valid) {
 							if (!this.context.errors) {
@@ -75,7 +77,7 @@ class Lysis {
 					this.context.errors.push({ selector: this.selectors, tip: `${this.selectors} is mandatory.` });
 				}
 			} else {
-				matches.forEach((match) => {
+				forEach(matches, match => {
 					const valid = fn(match.value, ...args);
 					if (!valid) {
 						if (!this.context.errors) {
@@ -97,7 +99,7 @@ class Lysis {
 	validateCombined(fn, tip, terseMatchValues, ...args) {
 		// TODO implement terseMatchValues
 		if (isArray(this.selectors)) {
-			const combinedMatches = this.selectors.map((selector) => {
+			const combinedMatches = map(this.selectors, selector => {
 				const matches = matcher(selector, this.value);
 				if (isEmpty(matches) && !this.isOptional) {
 					if (!this.context.errors) {
@@ -121,7 +123,7 @@ class Lysis {
 					const err = this.mapErrorFn(combinedMatches, tip);
 					this.context.errors.push(err);
 				} else {
-					this.context.errors.push({ selectors: combinedMatches.map(p => p.selector), tip });
+					this.context.errors.push({ selectors: map(combinedMatches, p => p.selector), tip });
 				}
 			}
 		} else {
@@ -132,17 +134,17 @@ class Lysis {
 
 	sanitize(fn, ...args) {
 		if (isArray(this.selectors)) {
-			this.selectors.forEach((selector) => {
-				matcher(selector, this.value)
-					.forEach((match) => {
-						set(this.value, match.path, fn(match.value, ...args));
-					});
-			});
-		} else {
-			matcher(this.selectors, this.value)
-				.forEach((match) => {
+			forEach(this.selectors, selector => {
+				const matches = matcher(selector, this.value);
+				forEach(matches, match => {
 					set(this.value, match.path, fn(match.value, ...args));
 				});
+			});
+		} else {
+			const matches = matcher(this.selectors, this.value);
+			forEach(matches, match => {
+				set(this.value, match.path, fn(match.value, ...args));
+			});
 		}
 		return this;
 	}

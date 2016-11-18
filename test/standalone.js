@@ -125,7 +125,7 @@ describe('Lysis - Standalone validation', () => {
 		]);
 	});
 
-	it.skip('check validateCombined with terseMatches', () => {
+	it('check validateCombined with terseMatches', () => {
 		const toValidate = {
 			one: 'one',
 			two: {
