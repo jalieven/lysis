@@ -437,7 +437,13 @@ Indication that if no matches are found for the selector the validation will be 
 
 ### Method `validateCombined(func, tip, ...args)`
 
-When different parts of the object/array under validation must be validated in combination. Calling this method only makes sense when you provide an array with selectors (or a selector into an array) in the Lysis constructor! The signature of the func method is slightly different than the validate to accomodate for the multiple matches: TODO fill in signature.
+When different parts of the object/array under validation must be validated in combination. Calling this method only makes sense when you provide an array with selectors (or a selector into an array) in the Lysis constructor! The signature of the func method is slightly different than the validate to accommodate for the multiple matches:
+
+- `func` - function with signature func(matches, ...args) that returns true (if matches are valid in combination) or false (if invalid and an error must be added to the context object).
+- `tip` - string containing info about the invalid value and how to correct it.
+- `args` - extra arguments to be used in the validation function 'func'.
+
+The structure of the matches provided in the `func` function is an object with the provided selectors as key and the matchValues array as the values.
 
 ### Method `sanitize(func, ...args)`
 
