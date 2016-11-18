@@ -10,6 +10,7 @@
     "test": "NODE_ENV=test mocha --compilers js:babel-register --require babel-polyfill test/index.js",
     "lint": "eslint src/** test/**",
     "coverage": "nyc --check-coverage --lines 90 --functions 100 --branches 80 --statements 90 npm run test",
+    "coverage-report": "nyc --reporter=lcov --check-coverage --lines 90 --functions 100 --branches 80 --statements 90 npm run test",
     "precommit": "npm run lint && npm run coverage",
     "pub": "npm run lint && npm run coverage && npm run build && npm publish"
   },
