@@ -1,6 +1,8 @@
 'use strict';
 
 import map from 'lodash/map';
+import mapValues from 'lodash/mapValues';
+import keys from 'lodash/keys';
 import forEach from 'lodash/forEach';
 import assign from 'lodash/assign';
 import set from 'lodash/set';
@@ -68,41 +70,18 @@ class Lysis {
 	}
 
 	validateCombined(fn, tip, ...args) {
-		if (isArray(this.selectors)) {
-			const functionMatches = {};
-			const combinedMatches = map(this.selectors, (selector) => {
-				const matches = matcher(selector, this.value);
-				if (isEmpty(matches) && !this.isOptional) {
-					if (!this.context.errors) {
-						this.context.errors = [];
-					}
-					if (this.mapMandatoryFn && isFunction(this.mapMandatoryFn)) {
-						const mandatoryErr = this.mapMandatoryFn(selector);
-						this.context.errors.push(mandatoryErr);
-					} else {
-						this.context.errors.push({ selector, tip: `${selector} is mandatory.` });
-					}
-				}
-				const values = map(matches, 'value');
-				const result = {};
-				result[selector] = values;
-				assign(functionMatches, result);
-				return { selector, matches };
-			});
-			const valid = fn(functionMatches, ...args);
-			if (!valid) {
-				if (!this.context.errors) {
-					this.context.errors = [];
-				}
-				if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
-					const err = this.mapErrorFn(combinedMatches, tip);
-					this.context.errors.push(err);
-				} else {
-					this.context.errors.push({ selectors: map(combinedMatches, p => p.selector), tip });
-				}
+		const functionMatches = mapValues(this.matches, (matches) => map(matches, 'value'));
+		const valid = fn(functionMatches, ...args);
+		if (!valid) {
+			if (!this.context.errors) {
+				this.context.errors = [];
 			}
-		} else {
-			this.validate(fn, tip, args);
+			if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
+				const err = this.mapErrorFn(this.matches, tip);
+				this.context.errors.push(err);
+			} else {
+				this.context.errors.push({ selectors: keys(this.matches), tip });
+			}
 		}
 		return this;
 	}

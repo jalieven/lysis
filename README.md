@@ -397,36 +397,30 @@ and tip is the string provided in the 'validate' method.
 If you use the validateCombined method the signature of the mapErrorFunction becomes mapErrorFunction(matches, tip) where the 'matches' has the following structure:
 
 ```Json
-[
-	{
-		"selector": "one.two.*.three",
-		"matches": [
-			{
-				"path": ["one", "two", "0", "three"],
-				"parent": { "three": "right here" },
-				"value": "right here",
-				"key": "three"
-			},
-			{
-				"path": ["one", "two", "1", "three"],
-				"parent": { "three": "right here" },
-				"value": "right here",
-				"key": "three"
-			}
-		]
-	},
-	{
-		"selector": "one.four",
-		"matches": [
-			{
-				"path": ["one", "four"],
-				"parent": { "four": "here" },
-				"value": "here",
-				"key": "four"
-			}
-		]
-	}
-]
+{
+	one.two.*.three": [
+		{
+			"path": ["one", "two", "0", "three"],
+			"parent": { "three": "right here" },
+			"value": "right here",
+			"key": "three"
+		},
+		{
+			"path": ["one", "two", "1", "three"],
+			"parent": { "three": "right here" },
+			"value": "right here",
+			"key": "three"
+		}
+	],
+	"one.four": [
+		{
+			"path": ["one", "four"],
+			"parent": { "four": "here" },
+			"value": "here",
+			"key": "four"
+		}
+	]
+}
 ```
 and tip is the string provided in the 'validateCombined' method.
 
