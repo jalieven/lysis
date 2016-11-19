@@ -68,6 +68,25 @@ describe('Lysis - Standalone validation', () => {
 		});
 	});
 
+	it('check sanitize before validate', () => {
+		const toSanitize = {
+			one: ' ',
+		};
+		const validationErrors = new Lysis(toSanitize, 'one')
+			.sanitize(trim)
+			.validate(not(isEmpty), 'One cannot be empty.')
+			.errors();
+		expect(validationErrors).to.eql([
+			{
+				path: [ 'one' ],
+				tip: 'One cannot be empty.'
+			}
+		]);
+		expect(toSanitize).to.eql({
+			one: '',
+		});
+	});
+
 	it('check validateCombined with mapErrorFunction', () => {
 		const toValidate = {
 			one: 'one',

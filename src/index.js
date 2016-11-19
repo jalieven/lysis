@@ -89,7 +89,11 @@ class Lysis {
 	sanitize(fn, ...args) {
 		forEach(this.matches, (matches) => {
 			forEach(matches, (match) => {
-				set(this.value, match.path, fn(match.value, ...args));
+				const sanitizedValue = fn(match.value, ...args);
+				/* eslint-disable no-param-reassign */
+				match.value = sanitizedValue;
+				/* eslint-enable no-param-reassign */
+				set(this.value, match.path, sanitizedValue);
 			});
 		});
 		return this;
