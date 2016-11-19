@@ -10,7 +10,6 @@ import Lysis, { and, or, not } from '../src';
 describe('Lysis - Standalone validation', () => {
 
 	it('check validate', () => {
-		console.time('duration')
 		const toValidate = {
 			one: 'ftp://somewhere.com',
 			two: 'https://www.google.com',
@@ -39,15 +38,15 @@ describe('Lysis - Standalone validation', () => {
 		expect(validationErrors).to.eql([
 			{
 				selector: 'two',
-				tip: 'two is mandatory.'
+				tip: 'two is mandatory.',
 			},
 			{
-				path: [ 'one' ],
-				tip: 'Url cannot be empty.'
+				path: ['one'],
+				tip: 'Url cannot be empty.',
 			},
 			{
-				path: [ 'one' ],
-				tip: 'Please provide a valid url.'
+				path: ['one'],
+				tip: 'Please provide a valid url.',
 			},
 		]);
 	});
@@ -246,7 +245,6 @@ describe('Lysis - Standalone validation', () => {
 			{ selector: 'tomorrow', tip: 'tomorrow is mandatory.' },
 			{ path: ['today'], tip: 'Today must be weekend!' },
 		]);
-		console.timeEnd('duration')
 	});
 
 });
