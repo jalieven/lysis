@@ -80,7 +80,7 @@ describe('Lysis - Standalone validation', () => {
 		};
 		const mapErrorFn = (matches, tip) => {
 			expect(matches).to.eql({
-				'one': [
+				one: [
 					{
 						path: [
 							'one',

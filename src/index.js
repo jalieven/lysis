@@ -70,7 +70,7 @@ class Lysis {
 	}
 
 	validateCombined(fn, tip, ...args) {
-		const functionMatches = mapValues(this.matches, (matches) => map(matches, 'value'));
+		const functionMatches = mapValues(this.matches, matches => map(matches, 'value'));
 		const valid = fn(functionMatches, ...args);
 		if (!valid) {
 			if (!this.context.errors) {
