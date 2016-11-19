@@ -175,6 +175,7 @@ describe('Lysis - Koa body validation', () => {
 		const app = createApp();
 		app.router.post('/body', function* () {
 			this.checkBody('one.*.three')
+				.mandatory()
 				.validate(isInt, '"three" must be an integer.')
 				.sanitize(toInt, 10);
 			if (this.errors) {
@@ -207,7 +208,6 @@ describe('Lysis - Koa body validation', () => {
 		const app = createApp();
 		app.router.post('/body', function* () {
 			this.checkBody('one.*.three')
-				.optional()
 				.validate(isInt, '"three" must be an integer.')
 				.sanitize(toInt, 10);
 			if (this.errors) {

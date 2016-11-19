@@ -91,6 +91,7 @@ describe('Lysis - Express query validation', () => {
 			const errMapping = (match, tip) =>
 				({ path: match.path, name: match.key, message: `${match.path.join('/')} with value of "${match.value}" must be a boolean or an integer!` });
 			req.checkQuery(['one', 'two', 'three', 'four.*'], errMapping)
+				.mandatory()
 				.validate(or(isBoolean, isInt), '"one" must be a boolean or an integer.')
 				.sanitize(toBoolean);
 			if (req.errors) {
@@ -114,15 +115,15 @@ describe('Lysis - Express query validation', () => {
 				expect(res.body).to.eql({
 					validation: [
 						{
+							selector: 'two',
+							tip: 'two is mandatory.',
+						},
+						{
 							path: [
 								'one',
 							],
 							name: 'one',
 							message: 'one with value of "one" must be a boolean or an integer!',
-						},
-						{
-							selector: 'two',
-							tip: 'two is mandatory.',
 						},
 						{
 							path: [

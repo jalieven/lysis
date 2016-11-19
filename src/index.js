@@ -9,6 +9,7 @@ import every from 'lodash/every';
 import isFunction from 'lodash/isFunction';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
 
 import { matcher } from './util';
 
@@ -16,83 +17,53 @@ class Lysis {
 
 	constructor(value, selectors, mapErrorFn, context) {
 		this.value = value;
-		this.selectors = selectors;
+		if (isString(selectors)) {
+			this.selectors = [selectors];
+		} else if (isArray(selectors)) {
+			this.selectors = selectors;
+		}
 		this.mapErrorFn = mapErrorFn;
 		this.context = context || {};
-		this.isOptional = false;
-	}
-
-	optional() {
-		this.isOptional = true;
-		return this;
+		this.matches = {};
+		forEach(this.selectors, (selector) => {
+			this.matches[selector] = matcher(selector, this.value);
+		});
 	}
 
 	mandatory(mapMandatoryFn) {
-		this.isOptional = false;
-		this.mapMandatoryFn = mapMandatoryFn;
+		forEach(this.selectors, (selector) => {
+			if (isEmpty(this.matches[selector])) {
+				if (!this.context.errors) {
+					this.context.errors = [];
+				}
+				if (mapMandatoryFn && isFunction(mapMandatoryFn)) {
+					const mandatoryErr = mapMandatoryFn(this.selectors);
+					this.context.errors.push(mandatoryErr);
+				} else {
+					this.context.errors.push({ selector, tip: `${selector} is mandatory.` });
+				}
+			}
+		});
 		return this;
 	}
 
 	validate(fn, tip, ...args) {
-		if (isArray(this.selectors)) {
-			forEach(this.selectors, (selector) => {
-				const matches = matcher(selector, this.value);
-				if (isEmpty(matches) && !this.isOptional) {
+		forEach(this.matches, (selectorMatches, selector) => {
+			forEach(selectorMatches, (match) => {
+				const valid = fn(match.value, ...args);
+				if (!valid) {
 					if (!this.context.errors) {
 						this.context.errors = [];
 					}
-					if (this.mapMandatoryFn && isFunction(this.mapMandatoryFn)) {
-						const mandatoryErr = this.mapMandatoryFn(this.selectors);
-						this.context.errors.push(mandatoryErr);
+					if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
+						const err = this.mapErrorFn(match, tip);
+						this.context.errors.push(err);
 					} else {
-						this.context.errors.push({ selector, tip: `${selector} is mandatory.` });
+						this.context.errors.push({ path: match.path, tip });
 					}
-				} else {
-					forEach(matches, (match) => {
-						const valid = fn(match.value, ...args);
-						if (!valid) {
-							if (!this.context.errors) {
-								this.context.errors = [];
-							}
-							if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
-								const err = this.mapErrorFn(match, tip);
-								this.context.errors.push(err);
-							} else {
-								this.context.errors.push({ path: match.path, tip });
-							}
-						}
-					});
 				}
 			});
-		} else {
-			const matches = matcher(this.selectors, this.value);
-			if (isEmpty(matches) && !this.isOptional) {
-				if (!this.context.errors) {
-					this.context.errors = [];
-				}
-				if (this.mapMandatoryFn && isFunction(this.mapMandatoryFn)) {
-					const mandatoryErr = this.mapMandatoryFn(this.selectors);
-					this.context.errors.push(mandatoryErr);
-				} else {
-					this.context.errors.push({ selector: this.selectors, tip: `${this.selectors} is mandatory.` });
-				}
-			} else {
-				forEach(matches, (match) => {
-					const valid = fn(match.value, ...args);
-					if (!valid) {
-						if (!this.context.errors) {
-							this.context.errors = [];
-						}
-						if (this.mapErrorFn && isFunction(this.mapErrorFn)) {
-							const err = this.mapErrorFn(match, tip);
-							this.context.errors.push(err);
-						} else {
-							this.context.errors.push({ path: match.path, tip });
-						}
-					}
-				});
-			}
-		}
+		});
 		return this;
 	}
 
@@ -137,19 +108,11 @@ class Lysis {
 	}
 
 	sanitize(fn, ...args) {
-		if (isArray(this.selectors)) {
-			forEach(this.selectors, (selector) => {
-				const matches = matcher(selector, this.value);
-				forEach(matches, (match) => {
-					set(this.value, match.path, fn(match.value, ...args));
-				});
-			});
-		} else {
-			const matches = matcher(this.selectors, this.value);
+		forEach(this.matches, (matches) => {
 			forEach(matches, (match) => {
 				set(this.value, match.path, fn(match.value, ...args));
 			});
-		}
+		});
 		return this;
 	}
 

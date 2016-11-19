@@ -3,13 +3,14 @@
 import map from 'lodash/map';
 import agent from 'supertest';
 import moment from 'moment';
-import { isBoolean, isInt, toBoolean, isURL, escape } from 'validator';
+import { isBoolean, isInt, toBoolean, isURL, isEmpty, escape, trim } from 'validator';
 
 import Lysis, { and, or, not } from '../src';
 
 describe('Lysis - Standalone validation', () => {
 
 	it('check validate', () => {
+		console.time('duration')
 		const toValidate = {
 			one: 'ftp://somewhere.com',
 			two: 'https://www.google.com',
@@ -21,6 +22,32 @@ describe('Lysis - Standalone validation', () => {
 		expect(validationErrors).to.eql([
 			{
 				message: `one with value of "${toValidate.one}" is not a valid HTTP url!`,
+			},
+		]);
+	});
+
+	it('check multi validate mandatory', () => {
+		const toValidate = {
+			one: '',
+		};
+		const validationErrors = new Lysis(toValidate, ['one', 'two'])
+			.mandatory()
+			.sanitize(trim)
+			.validate(not(isEmpty), 'Url cannot be empty.')
+			.validate(isURL, 'Please provide a valid url.', { protocols: ['http', 'https'] })
+			.errors();
+		expect(validationErrors).to.eql([
+			{
+				selector: 'two',
+				tip: 'two is mandatory.'
+			},
+			{
+				path: [ 'one' ],
+				tip: 'Url cannot be empty.'
+			},
+			{
+				path: [ 'one' ],
+				tip: 'Please provide a valid url.'
 			},
 		]);
 	});
@@ -216,9 +243,10 @@ describe('Lysis - Standalone validation', () => {
 			.validate(isWeekend, 'Today must be weekend!')
 			.errors();
 		expect(validationErrors).to.eql([
-			{ path: ['today'], tip: 'Today must be weekend!' },
 			{ selector: 'tomorrow', tip: 'tomorrow is mandatory.' },
+			{ path: ['today'], tip: 'Today must be weekend!' },
 		]);
+		console.timeEnd('duration')
 	});
 
 });

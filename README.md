@@ -95,13 +95,29 @@ Prints out:
 ]
 ```
 
-### Optional/mandatory validation
+### Mandatory validation
 
-Fields are mandatory by default:
+Fields are optional by default:
 
 ```Javascript
 const toValidate = {};
 const validationErrors = new Lysis(toValidate, 'id')
+	.validate(isInteger, 'id must be an integer.')
+	.errors();
+console.log(validationErrors);
+```
+
+Prints out:
+
+```Json
+undefined
+```
+
+Make it mandatory by calling the 'mandatory' method before the 'validate' method:
+
+```Javascript
+const validationErrors = new Lysis(toValidate, 'id')
+	.mandatory()
 	.validate(isInteger, 'id must be an integer.')
 	.errors();
 console.log(validationErrors);
@@ -116,15 +132,6 @@ Prints out:
 		"tip": "id is mandatory."
 	}
 ]
-```
-
-Make it optional by calling the 'optional' method before the 'validate' method:
-
-```Javascript
-const validationErrors = new Lysis(toValidate, 'id')
-	.optional()
-	.validate(isInteger, 'id must be an integer.')
-	.errors();
 ```
 
 Customize the mandatory validation message:
@@ -430,10 +437,6 @@ and tip is the string provided in the 'validateCombined' method.
 Indicates it there are no matches found for the provided selector Lysis will add a mandatory error onto the context errors array.
 
 - `mapMandatoryFunction` - function that maps the mandatory-error when no match was found. The signature of this function is: mapMandatoryFunction(selector).
-
-### Method `optional()`
-
-Indication that if no matches are found for the selector the validation will be ignored.
 
 ### Method `validate(func, tip, ...args)`
 

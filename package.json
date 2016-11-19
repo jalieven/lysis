@@ -1,6 +1,6 @@
 {
   "name": "lysis",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Composable validation for any environment",
   "main": "index.js",
   "scripts": {
