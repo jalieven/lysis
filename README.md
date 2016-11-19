@@ -398,7 +398,7 @@ If you use the validateCombined method the signature of the mapErrorFunction bec
 
 ```Json
 {
-	one.two.*.three": [
+	"one.two.*.three": [
 		{
 			"path": ["one", "two", "0", "three"],
 			"parent": { "three": "right here" },
