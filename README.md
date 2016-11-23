@@ -244,7 +244,7 @@ The 'and/or' function combines multiple predicate-functions:
 
 ```Javascript
 import { isBoolean, isInt, toBoolean } from 'validator';
-import { or } from 'lysis';
+import { or } from 'lysis/util';
 const toValidate = {
 	one: '0',
 	two: '1',
