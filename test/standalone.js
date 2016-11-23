@@ -79,9 +79,9 @@ describe('Lysis - Standalone validation', () => {
 			.errors();
 		expect(validationErrors).to.eql([
 			{
-				path: [ 'one' ],
-				tip: 'One cannot be empty.'
-			}
+				path: ['one'],
+				tip: 'One cannot be empty.',
+			},
 		]);
 		expect(toSanitize).to.eql({
 			one: '',
