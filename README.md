@@ -270,7 +270,7 @@ The 'not' function can only take one predicate-function as an argument!
 
 ```Javascript
 import { isBoolean, isInt, toBoolean } from 'validator';
-import { and, not } from 'lysis';
+import { and, not } from 'lysis/util';
 const toValidate = {
 	one: 'no_boolean_here',
 	two: '1',

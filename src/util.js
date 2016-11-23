@@ -1,5 +1,7 @@
 'use strict';
 
+import some from 'lodash/some';
+import every from 'lodash/every';
 import map from 'lodash/map';
 import flatMap from 'lodash/flatMap';
 
@@ -33,3 +35,9 @@ export const matcher = (selectors, object) => {
 	const splitSelectors = map([selectors], selector => selector.split('.'));
 	return object ? findMatches(object, splitSelectors) : obj => findMatches(obj, splitSelectors);
 };
+
+export const and = (...predicates) => (value, ...args) => every(predicates, predicate => predicate(value, ...args));
+
+export const or = (...predicates) => (value, ...args) => some(predicates, predicate => predicate(value, ...args));
+
+export const not = predicate => (value, ...args) => !predicate(value, ...args);

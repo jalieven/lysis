@@ -1,1 +1,1 @@
-module.exports = require('./dist/express');
+module.exports = require('./dist/express').validate;

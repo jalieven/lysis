@@ -6,7 +6,8 @@ import agent from 'supertest';
 import moment from 'moment';
 import { isBoolean, isInt, toBoolean, isURL, isEmpty, escape, trim } from 'validator';
 
-import Lysis, { and, or, not } from '../src';
+import Lysis from '../src';
+import { and, or, not } from '../src/util';
 
 describe('Lysis - Standalone validation', () => {
 

@@ -6,8 +6,6 @@ import keys from 'lodash/keys';
 import forEach from 'lodash/forEach';
 import assign from 'lodash/assign';
 import set from 'lodash/set';
-import some from 'lodash/some';
-import every from 'lodash/every';
 import isFunction from 'lodash/isFunction';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
@@ -104,11 +102,5 @@ class Lysis {
 	}
 
 }
-
-export const and = (...predicates) => (value, ...args) => every(predicates, predicate => predicate(value, ...args));
-
-export const or = (...predicates) => (value, ...args) => some(predicates, predicate => predicate(value, ...args));
-
-export const not = predicate => (value, ...args) => !predicate(value, ...args);
 
 export default Lysis;

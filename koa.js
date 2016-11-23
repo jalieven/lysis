@@ -1,1 +1,1 @@
-module.exports = require('./dist/koa');
+module.exports = require('./dist/koa').validate;
