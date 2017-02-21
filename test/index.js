@@ -6,6 +6,7 @@ import './koa';
 import './express';
 import './util';
 import './standalone';
+import './chain';
 
 global.chai = chai;
 global.expect = global.chai.expect;

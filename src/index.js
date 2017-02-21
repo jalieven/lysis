@@ -15,7 +15,7 @@ import { matcher } from './util';
 
 class Lysis {
 
-	constructor(value, selectors, mapErrorFn, context) {
+	constructor(value, selectors = [], mapErrorFn, context) {
 		this.value = value;
 		if (isString(selectors)) {
 			this.selectors = [selectors];

@@ -263,4 +263,14 @@ describe('Lysis - Standalone validation', () => {
 		]);
 	});
 
+	it('check selector not mandatory and not present', () => {
+		const toValidate = {
+			one: '',
+		};
+		const validationErrors = new Lysis(toValidate, ['three'])
+			.validate(not(isEmpty), 'Url cannot be empty.')
+			.errors();
+		expect(validationErrors).to.eql(undefined);
+	});
+
 });
